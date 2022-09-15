@@ -1,0 +1,22 @@
+
+principal(){
+
+&
+
+leer(h);
+
+
+imprimir(hola)
+
+declarar entero hola;
+
+declarar entero a = 5;
+
+
+declarar entero b = "String";
+
+declarar entero c
+
+
+
+}
