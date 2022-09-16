@@ -17,5 +17,8 @@ principal(){
 
 	declarar entero uno;
 
-	asignacion uno = 2;
+	asignacion_a uno = 2 / 3;
+
+
+
 }

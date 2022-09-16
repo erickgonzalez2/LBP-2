@@ -684,6 +684,7 @@ Token t;
   static final public     void asignacionAritmetica() throws ParseException {
     jj_consume_token(ASIGN_A);
     identificador();
+guardarNombreV();
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IGUAL:{
@@ -728,6 +729,7 @@ Token t;
     }
     operacion();
     delimiter();
+asignacion_a = true; asignar();
   }
 
 //----------------------------------------GRAMATICAS INCREMENTO O DECREMENTO -------------------------------------------------------
@@ -1708,6 +1710,7 @@ error();
 
             }
 
+            colaOperacion.clear();
             valorV = Integer.toString(valor);
             return true;
 
@@ -1783,14 +1786,22 @@ error();
 
 
             }
-
+            colaOperacion.clear();
             valorV = Float.toString(valor);
             return true;
          }
 
 
 
-        else return false;
+        else {
+
+        String errorS = "Error Semantico en la linea " + token.beginLine + " conversion de tipos innacessible";
+        erroresSemanticos.add(errorS);
+        colaOperacion.clear();
+
+        return false;
+
+        }
   }
 
   static public void declarar() throws ParseException {//SI SE HACE UNA DECLARACION ARITMETICA
@@ -1997,6 +2008,20 @@ error();
 
         int indice = nombreVariable.indexOf(nombreV);
         tipoD = tipoDato.get(indice);
+
+        if(asignacion_a){
+
+        asignacion_a=false;
+
+        if(!realizarOperacion()){
+
+
+            nombreV="";
+            tipoD="";
+            valorV="nulo";
+            return;
+        }
+        }
 
         //SI LO QUE SE VA A ASIGNAR ES OTRA VARIABLE
 
