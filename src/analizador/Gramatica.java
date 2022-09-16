@@ -1316,8 +1316,10 @@ Token t;
     jj_consume_token(READ);
     pari();
     identificador();
+guardarNombreV();
     pard();
     delimiter();
+errorSemanticoLeer();
   }
 
   static final public void delimiter() throws ParseException {
@@ -1595,8 +1597,18 @@ error();
     }
   }
 
+  static public void errorSemanticoLeer() throws ParseException {if(!busquedaV(nombreV)){
+
+            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se intenta leer no se ha declarado";
+            erroresSemanticos.add(errorS);
+            nombreV="";
+
+            }
+  }
+
   static public void declarar() throws ParseException {//SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
         if(ident){
+            ident = false;
 
                 //BUSCAMOS SI LA VARIABLE YA FUE DEFINIDA
 
@@ -1803,6 +1815,13 @@ error();
     finally { jj_save(2, xla); }
   }
 
+  static private boolean jj_3R_11()
+ {
+    if (jj_scan_token(FOR)) return true;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
   static private boolean jj_3_3()
  {
     if (jj_3R_12()) return true;
@@ -1847,13 +1866,6 @@ error();
     return false;
   }
 
-  static private boolean jj_3R_11()
- {
-    if (jj_scan_token(FOR)) return true;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
   static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
   static public GramaticaTokenManager token_source;
@@ -1877,7 +1889,7 @@ error();
       jj_la1_0 = new int[] {0x7fdc0000,0x6a140000,0x15480000,0x0,0x0,0x0,0x40,0x0,0x0,0xf80,0xf80,0x0,0x1f040,0x60000000,0x180,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7fdc0000,0x7fdc0000,0x7fdc0000,0x0,0x0,0x180,0x7fdc0000,0x7fdc0000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x20000000,0x20000000,0x0,0x1f070000,0xf80000,0x1f070000,0x8,0xf80000,0x7000000,0x0,0x0,0x7000000,0x0,0x0,0x0,0x1f070000,0x1f000000,0x1f002000,0xdf80,0xdf80,0x1f000000,0x1f002000,0x20000000,0x20000000,0x20000000,0x1f80,0x3000000,0x0,0x20000000,0x20000000,};
+      jj_la1_1 = new int[] {0x10000000,0x10000000,0x0,0xf838000,0x7c0000,0xf838000,0x8,0x7c0000,0x3800000,0x0,0x0,0x3800000,0x0,0x0,0x0,0xf838000,0xf800000,0xf801000,0x6fc0,0x6fc0,0xf800000,0xf801000,0x10000000,0x10000000,0x10000000,0xfc0,0x1800000,0x0,0x10000000,0x10000000,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[3];
   static private boolean jj_rescan = false;
@@ -2085,7 +2097,7 @@ error();
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[62];
+    boolean[] la1tokens = new boolean[61];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -2102,7 +2114,7 @@ error();
         }
       }
     }
-    for (int i = 0; i < 62; i++) {
+    for (int i = 0; i < 61; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

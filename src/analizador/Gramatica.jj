@@ -24,7 +24,7 @@ class Gramatica{
     static String tipoD ="";
     static String valorV="nulo";
     static boolean ident = false;
-    
+
     
     public static void main(String[] args )  throws FileNotFoundException {
         
@@ -297,8 +297,7 @@ TOKEN :
     | <LLAVED : "}">      //     {System.out.println("(CE_LLAVEDER ---> \"" +  image + "\")");}//28
     | <DELIMITER : ";">   //   {System.out.println("(CE_DELIMITADOR ---> \"" +  image + "\")");}//29
     | <COMA : ",">        //   {System.out.println("(CE_COMA ---> \"" +  image + "\")");}//30
-    | <COMILLA : "\"">    //   {System.out.println("(CE_COMILLA ---> \"" +  image + "\")");}//31
-    | <COMENTARIO : "#">  //   {System.out.println("(CE_COMENTARIO ---> \"" +  image + "\")");}//32
+    | <COMILLA : "\"">    //   {System.out.println("(CE_COMILLA ---> \"" +  image + "\")");}//31 
 }
 
 
@@ -768,7 +767,7 @@ TOKEN :
 //----------------------------------------LEER DATOS DESDE TECLADO -------------------------------------------------------
     void leer() : {}
     {
-        <READ>pari()identificador()pard()delimiter()
+        <READ>pari()identificador(){guardarNombreV();}pard()delimiter(){errorSemanticoLeer();}
 
 }
 
@@ -1142,7 +1141,20 @@ void si():
 
 
     }
+    
+    JAVACODE
 
+    public void errorSemanticoLeer(){
+
+        if(!busquedaV(nombreV)){
+
+            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se intenta leer no se ha declarado";          
+            erroresSemanticos.add(errorS);
+            nombreV="";
+
+            }
+
+    }
 
     JAVACODE
 
@@ -1150,6 +1162,7 @@ void si():
 
         //SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
         if(ident){
+            ident = false;
                 
                 //BUSCAMOS SI LA VARIABLE YA FUE DEFINIDA
 

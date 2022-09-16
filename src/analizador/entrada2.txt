@@ -2,11 +2,14 @@
 principal(){
 
 	
+
 	declarar flotante on = 7.8 ;
 	
 	declarar entero b;
 
 	declarar flotante o = on ;
 
+	leer(imprimir);
 
+	leer(c);
 }
