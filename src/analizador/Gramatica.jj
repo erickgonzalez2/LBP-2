@@ -20,11 +20,15 @@ class Gramatica{
     static ArrayList<String> erroresLexicos = new ArrayList<String>(); 
     static ArrayList<String> erroresSintacticos = new ArrayList<String>(); 
     static ArrayList<String> erroresSemanticos = new ArrayList<String>(); 
+    static ArrayList<String> colaOperacion = new ArrayList<String>();
+
     static String nombreV ="";
     static String tipoD ="";
     static String valorV="nulo";
     static boolean ident = false;
-
+    static boolean decAritmetica = false;
+    static boolean asignacion = false;
+    static boolean asignacion_a = false;
     
     public static void main(String[] args )  throws FileNotFoundException {
         
@@ -472,7 +476,7 @@ TOKEN :
         <DECLARATE_A>
         //TIPO DE DATO
 
-        try{(<INT>|<CARACTER>|<FLOAT>|<STRING>|<BOOL>)
+        try{(<INT>|<CARACTER>|<FLOAT>|<STRING>|<BOOL>){guardarTipoDato();}
         }
 
         catch (ParseException e) {        
@@ -488,17 +492,17 @@ TOKEN :
         }
 
         //IDENTIFICADOR
-        identificador()
+        identificador(){guardarNombreV();}
 
         //SIMBOLO =
-        ((igual()operacion()delimiter()))
+        ((igual()operacion()delimiter(){decAritmetica=true;declarar();}))
     }
 
 //----------------------------------------OPERACIONES ARITMETICAS-------------------------------------------------------
     void operacion() : {}
     {
         try{
-       ( <NUMERO> | <IDENTIFICADOR> | <DECIMAL>)
+       ( <NUMERO> | <IDENTIFICADOR> | <DECIMAL>){guardarColaOperacion();}
        }
 
        catch (ParseException e) {        
@@ -516,7 +520,7 @@ TOKEN :
 
     (
 
-    try{(<MAS>|<MENOS>|<MULTIPLICAR>|<DIVIDIR>|<MODULO>)
+    try{(<MAS>|<MENOS>|<MULTIPLICAR>|<DIVIDIR>|<MODULO>){guardarColaOperacion();}
 
     }
 
@@ -532,7 +536,7 @@ TOKEN :
         }
 
 
-    try{(<NUMERO>|<IDENTIFICADOR>|<DECIMAL>)
+    try{(<NUMERO>|<IDENTIFICADOR>|<DECIMAL>){guardarColaOperacion();}
     }
 
     catch (ParseException e) {        
@@ -607,10 +611,10 @@ TOKEN :
     {
         //PALABRA RESERVADA       
 
-         <ASIGN> identificador() igual()
+         <ASIGN> identificador(){guardarNombreV();} igual()
 
 
-        try{(<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<TRUE>|<FALSE>|<NULL>|<CADENA>|<CHAR>)}
+        try{(<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<TRUE>|<FALSE>|<NULL>|<CADENA>|<CHAR>){guardarValorV();}}
 
         catch (ParseException e) {        
         Token t;
@@ -625,7 +629,7 @@ TOKEN :
         }
 
 
-        delimiter()
+        delimiter(){asignacion = true;;declarar();}
 
 
 
@@ -1156,9 +1160,209 @@ void si():
 
     }
 
+    JAVACODE 
+
+    public void guardarColaOperacion(){
+
+    colaOperacion.add(token.image);
+    }
+
+
+    JAVACODE
+
+    public boolean realizarOperacion(){
+        
+        int acc = 1;
+    
+        //SI ES UN ENTERO
+        if(tipoD.equals("entero")){
+        int valor = 0;
+        
+        
+
+        for(String s1 : colaOperacion){
+
+                //SI ES UN OPERADOR
+                if(s1.equals("+"))acc=1;
+                else if(s1.equals("-"))acc=2;
+                else if(s1.equals("*"))acc=3;
+                else if(s1.equals("/"))acc=4;
+                
+                //SI ES UN OPERANDO
+                else if(isNumeric(s1)){
+
+                    if(acc==1)valor+= Integer.parseInt(s1);
+                    if(acc==2)valor-= Integer.parseInt(s1);
+                    if(acc==3)valor*= Integer.parseInt(s1);
+                    if(acc==4)valor/= Integer.parseInt(s1);
+                    
+                }
+
+                else if(isFloat(s1)){
+
+                        String errorS = "Error Semantico en la linea " + token.beginLine + " los operandos son de tipos distintos";          
+                        erroresSemanticos.add(errorS);
+                        return false;
+      
+                        }
+                
+                else{
+                    // BUSCA SI ES UNA VARIABLE
+                    if(busquedaV(s1)){
+                            
+                        int indice = nombreVariable.indexOf(s1);
+                        
+                        int x;
+                        
+                        try{
+                           String s2 = valorAlmacenado.get(indice);
+                           
+                           if(s2.equals("nulo")){
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
+                            erroresSemanticos.add(errorS);
+                            return false;
+                            
+                            }
+                           
+                           x = Integer.parseInt(s2); 
+                           
+                           if(acc==1)valor+= x;
+                           if(acc==2)valor-= x;
+                           if(acc==3)valor*= x;
+                           if(acc==4)valor/= x;
+
+                           
+                        }
+                        catch(NumberFormatException ex){
+                                
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";          
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                        }
+                            
+
+                        }
+                        //NO SE ENCONTRO LA VARIABLE
+                      else{
+
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";          
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                    }
+
+                }
+                
+
+                
+            }
+
+            valorV = Integer.toString(valor);
+            return true;
+        
+        }
+        //SI ES UN FLOTANTE
+        else if(tipoD.equals("flotante")){
+        float valor = 0;
+
+            for(String s1 : colaOperacion){
+            
+                if(s1.equals("+"))acc=1;
+                else if(s1.equals("-"))acc=2;
+                else if(s1.equals("*"))acc=3;
+                else if(s1.equals("/"))acc=4;
+                
+                //ES UN OPERANDO
+                else if(isFloat(s1)){
+
+                    if(acc==1)valor+= Float.parseFloat(s1);
+                    if(acc==2)valor-= Float.parseFloat(s1);
+                    if(acc==3)valor*= Float.parseFloat(s1);;
+                    if(acc==4)valor/= Float.parseFloat(s1);
+                    
+                }
+                
+                else{
+                    // BUSCA SI ES UNA VARIABLE
+                    if(busquedaV(s1)){
+                            
+                        int indice = nombreVariable.indexOf(s1);
+                        
+                        float x;
+                        
+                        try{
+                           String s2 = valorAlmacenado.get(indice);
+                           
+                           if(s2.equals("nulo")){
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
+                            erroresSemanticos.add(errorS);
+                            return false;
+                            
+                            }
+                           
+                           x = Float.parseFloat(s2); 
+                           
+                           if(acc==1)valor+= x;
+                           if(acc==2)valor-= x;
+                           if(acc==3)valor*= x;
+                           if(acc==4)valor/= x;
+
+                           
+                        }
+                        catch(NumberFormatException ex){
+                                
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";          
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                        }
+                            
+
+                        }
+                        //NO SE ENCONTRO LA VARIABLE
+                      else{
+
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";          
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                    }
+
+                }
+
+
+            }
+        
+            valorV = Float.toString(valor);
+            return true;
+         }
+        
+        
+            
+        else return false;
+
+    }
+
+
     JAVACODE
 
     public void declarar(){
+
+        //SI SE HACE UNA DECLARACION ARITMETICA
+        if(decAritmetica){
+            decAritmetica = false;
+            if(!realizarOperacion()){            
+            nombreV="";
+            tipoD="";
+            valorV="nulo";
+
+
+            return;
+
+
+            }
+        }
 
         //SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
         if(ident){

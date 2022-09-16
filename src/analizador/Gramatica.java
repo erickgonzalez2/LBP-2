@@ -11,11 +11,14 @@ class Gramatica implements GramaticaConstants {
     static ArrayList<String> erroresLexicos = new ArrayList<String>();
     static ArrayList<String> erroresSintacticos = new ArrayList<String>();
     static ArrayList<String> erroresSemanticos = new ArrayList<String>();
+    static ArrayList<String> colaOperacion = new ArrayList<String>();
+
     static String nombreV ="";
     static String tipoD ="";
     static String valorV="nulo";
     static boolean ident = false;
-
+    static boolean decAritmetica = false;
+    static boolean asignacion = false;
 
     public static void main(String[] args )  throws FileNotFoundException {
 
@@ -539,6 +542,7 @@ declarar();
         jj_consume_token(-1);
         throw new ParseException();
       }
+guardarTipoDato();
     } catch (ParseException e) {
 Token t;
         errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
@@ -551,9 +555,11 @@ Token t;
                t!=null && t.kind != EOF );
     }
     identificador();
+guardarNombreV();
     igual();
     operacion();
     delimiter();
+decAritmetica=true;declarar();
   }
 
 //----------------------------------------OPERACIONES ARITMETICAS-------------------------------------------------------
@@ -577,6 +583,7 @@ Token t;
         jj_consume_token(-1);
         throw new ParseException();
       }
+guardarColaOperacion();
     } catch (ParseException e) {
 Token t;
         errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
@@ -629,6 +636,7 @@ Token t;
           jj_consume_token(-1);
           throw new ParseException();
         }
+guardarColaOperacion();
       } catch (ParseException e) {
 Token t;
         errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
@@ -658,6 +666,7 @@ Token t;
           jj_consume_token(-1);
           throw new ParseException();
         }
+guardarColaOperacion();
       } catch (ParseException e) {
 Token t;
         errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
@@ -772,6 +781,7 @@ Token t;
   static final public     void asignaciones() throws ParseException {
     jj_consume_token(ASIGN);
     identificador();
+guardarNombreV();
     igual();
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -812,6 +822,7 @@ Token t;
         jj_consume_token(-1);
         throw new ParseException();
       }
+guardarValorV();
     } catch (ParseException e) {
 Token t;
         errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
@@ -824,6 +835,7 @@ Token t;
             t.kind != CADENA && t.kind != CHAR && t != null && t.kind != EOF );
     }
     delimiter();
+asignacion = true;;declarar();
   }
 
 //----------------------------------------COMPARACION LOGICA -------------------------------------------------------
@@ -1606,7 +1618,196 @@ error();
             }
   }
 
-  static public void declarar() throws ParseException {//SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
+  static public void guardarColaOperacion() throws ParseException {colaOperacion.add(token.image);
+  }
+
+  static public boolean realizarOperacion() throws ParseException {int acc = 1;
+
+        //SI ES UN ENTERO
+        if(tipoD.equals("entero")){
+        int valor = 0;
+
+
+
+        for(String s1 : colaOperacion){
+
+                //SI ES UN OPERADOR
+                if(s1.equals("+"))acc=1;
+                else if(s1.equals("-"))acc=2;
+                else if(s1.equals("*"))acc=3;
+                else if(s1.equals("/"))acc=4;
+
+                //SI ES UN OPERANDO
+                else if(isNumeric(s1)){
+
+                    if(acc==1)valor+= Integer.parseInt(s1);
+                    if(acc==2)valor-= Integer.parseInt(s1);
+                    if(acc==3)valor*= Integer.parseInt(s1);
+                    if(acc==4)valor/= Integer.parseInt(s1);
+
+                }
+
+                else if(isFloat(s1)){
+
+                        String errorS = "Error Semantico en la linea " + token.beginLine + " los operandos son de tipos distintos";
+                        erroresSemanticos.add(errorS);
+                        return false;
+
+                        }
+
+                else{
+                    // BUSCA SI ES UNA VARIABLE
+                    if(busquedaV(s1)){
+
+                        int indice = nombreVariable.indexOf(s1);
+
+                        int x;
+
+                        try{
+                           String s2 = valorAlmacenado.get(indice);
+
+                           if(s2.equals("nulo")){
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                            }
+
+                           x = Integer.parseInt(s2);
+
+                           if(acc==1)valor+= x;
+                           if(acc==2)valor-= x;
+                           if(acc==3)valor*= x;
+                           if(acc==4)valor/= x;
+
+
+                        }
+                        catch(NumberFormatException ex){
+
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                        }
+
+
+                        }
+                        //NO SE ENCONTRO LA VARIABLE
+                      else{
+
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                    }
+
+                }
+
+
+
+            }
+
+            valorV = Integer.toString(valor);
+            return true;
+
+        }
+        //SI ES UN FLOTANTE
+        else if(tipoD.equals("flotante")){
+        float valor = 0;
+
+            for(String s1 : colaOperacion){
+
+                if(s1.equals("+"))acc=1;
+                else if(s1.equals("-"))acc=2;
+                else if(s1.equals("*"))acc=3;
+                else if(s1.equals("/"))acc=4;
+
+                //ES UN OPERANDO
+                else if(isFloat(s1)){
+
+                    if(acc==1)valor+= Float.parseFloat(s1);
+                    if(acc==2)valor-= Float.parseFloat(s1);
+                    if(acc==3)valor*= Float.parseFloat(s1);;
+                    if(acc==4)valor/= Float.parseFloat(s1);
+
+                }
+
+                else{
+                    // BUSCA SI ES UNA VARIABLE
+                    if(busquedaV(s1)){
+
+                        int indice = nombreVariable.indexOf(s1);
+
+                        float x;
+
+                        try{
+                           String s2 = valorAlmacenado.get(indice);
+
+                           if(s2.equals("nulo")){
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                            }
+
+                           x = Float.parseFloat(s2);
+
+                           if(acc==1)valor+= x;
+                           if(acc==2)valor-= x;
+                           if(acc==3)valor*= x;
+                           if(acc==4)valor/= x;
+
+
+                        }
+                        catch(NumberFormatException ex){
+
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                        }
+
+
+                        }
+                        //NO SE ENCONTRO LA VARIABLE
+                      else{
+
+                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";
+                            erroresSemanticos.add(errorS);
+                            return false;
+
+                    }
+
+                }
+
+
+            }
+
+            valorV = Float.toString(valor);
+            return true;
+         }
+
+
+
+        else return false;
+  }
+
+  static public void declarar() throws ParseException {//SI SE HACE UNA DECLARACION ARITMETICA
+        if(decAritmetica){
+            decAritmetica = false;
+            if(!realizarOperacion()){
+            nombreV="";
+            tipoD="";
+            valorV="nulo";
+
+
+            return;
+
+
+            }
+        }
+
+        //SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
         if(ident){
             ident = false;
 
@@ -1815,20 +2016,6 @@ error();
     finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_3R_11()
- {
-    if (jj_scan_token(FOR)) return true;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_3()
- {
-    if (jj_3R_12()) return true;
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_12()
  {
     if (jj_scan_token(ELSE)) return true;
@@ -1863,6 +2050,20 @@ error();
   static private boolean jj_3R_13()
  {
     if (jj_scan_token(IF)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11()
+ {
+    if (jj_scan_token(FOR)) return true;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_3()
+ {
+    if (jj_3R_12()) return true;
+    if (jj_3R_14()) return true;
     return false;
   }
 

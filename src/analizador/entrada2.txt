@@ -1,15 +1,19 @@
 
 principal(){
 
-	
+	leer (a);	
 
-	declarar flotante on = 7.8 ;
+	declarar flotante on = 7.534 ;
 	
-	declarar entero b;
+	declarar entero b = 9;
 
 	declarar flotante o = on ;
 
-	leer(imprimir);
+	imprimir(b);
+	
+	declarar cadena str = "hola";
 
-	leer(c);
+	declarar_a entero z = on+3+5+on;
+
+	declarar entero uno = str;
 }
