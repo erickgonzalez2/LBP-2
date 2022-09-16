@@ -14,8 +14,9 @@ class Gramatica implements GramaticaConstants {
     static String nombreV ="";
     static String tipoD ="";
     static String valorV="nulo";
+    static boolean ident = false;
 
-    static boolean yaimpreso = false;
+
     public static void main(String[] args )  throws FileNotFoundException {
 
     System.out.println("Ingresa el nombre del archivo que quieres analizar");
@@ -444,6 +445,7 @@ guardarNombreV();
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case IDENTIFICADOR:{
           jj_consume_token(IDENTIFICADOR);
+ident = true;
           break;
           }
         case NUMERO:{
@@ -1556,19 +1558,19 @@ error();
         return resultado;
   }
 
-  static public boolean busquedaV() throws ParseException {if(nombreVariable.isEmpty())return true;
+  static public boolean busquedaV(String str) throws ParseException {if(nombreVariable.isEmpty())return false;
 
         else{
 
         for(String buscar : nombreVariable){
 
-        if(buscar.equals(nombreV))return false;
+        if(buscar.equals(str))return true;
 
         }
 
         }
 
-        return true;
+        return false;
   }
 
   static public void errorSemanticoImprimir() throws ParseException {int pos = nombreVariable.indexOf(token.image);
@@ -1593,8 +1595,76 @@ error();
     }
   }
 
-  static public void declarar() throws ParseException {//SI NO HAY NADA DENTRO DE LA LISTA
-        if(busquedaV()){
+  static public void declarar() throws ParseException {//SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
+        if(ident){
+
+                //BUSCAMOS SI LA VARIABLE YA FUE DEFINIDA
+
+                if(busquedaV(valorV)){
+                    //SI LA ENCONTRO Y PROCEDEMOS A VERIFICAR QUE SEAN DEL MISMO TIPO
+
+                       int indiceV  = nombreVariable.indexOf(valorV);
+
+
+                       if(tipoDato.get(indiceV).equals(tipoD)){
+                            //VERIFICA QUE LA VARIABLE ESTE INICIALIZADA
+
+
+                                if(!valorAlmacenado.get(indiceV).equals("nulo")){
+
+                                //METEMOS EL VALOR A LA VARIABLE CORRESPONDIENTE
+
+                                    valorV = valorAlmacenado.get(indiceV);
+                                }
+
+                                else{
+
+                                //NO SE HA INICIALIZADO LA VARIABLE
+
+                                    String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";
+                                    erroresSemanticos.add(errorS);
+                                    errorS="";
+                                    nombreV="";
+                                    tipoD="";
+                                    valorV="nulo";
+                                    return;
+
+                                }
+
+
+                        }
+
+                        //NO SON DEL MISMO TIPO
+                        else{
+                          String errorS = "Error Semantico en la linea " + token.beginLine + " la variables no son del mismo tipo";
+                          erroresSemanticos.add(errorS);
+                          errorS="";
+                          nombreV="";
+                          tipoD="";
+                          valorV="nulo";
+                          return;
+                          }
+
+
+                    }
+
+                //EN CASO DE QUE LA VARIABLE NO SE HA DEFINIDO
+                else{
+
+                String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se busca asignar no ha sido definida";
+                erroresSemanticos.add(errorS);
+                errorS="";
+                nombreV="";
+                tipoD="";
+                valorV="nulo";
+                return;
+                }
+
+            }
+
+
+        //SI NO HAY NADA DENTRO DE LA LISTA
+        if(!busquedaV(nombreV)){
 
             if(valorV.equals("nulo")){
                 nombreVariable.add(nombreV);
@@ -1733,13 +1803,6 @@ error();
     finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_3R_11()
- {
-    if (jj_scan_token(FOR)) return true;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
   static private boolean jj_3_3()
  {
     if (jj_3R_12()) return true;
@@ -1781,6 +1844,13 @@ error();
   static private boolean jj_3R_13()
  {
     if (jj_scan_token(IF)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11()
+ {
+    if (jj_scan_token(FOR)) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 

@@ -1,11 +1,12 @@
 
 principal(){
 
-	declarar flotante hola = 10;
- 	
-	imprimir(hola);
+	
+	declarar flotante on = 7.8 ;
+	
+	declarar entero b;
 
-	imprimir(n);
+	declarar flotante o = on ;
 
 
 }

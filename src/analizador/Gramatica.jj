@@ -23,8 +23,9 @@ class Gramatica{
     static String nombreV ="";
     static String tipoD ="";
     static String valorV="nulo";
+    static boolean ident = false;
     
-    static boolean yaimpreso = false;
+    
     public static void main(String[] args )  throws FileNotFoundException {
         
     System.out.println("Ingresa el nombre del archivo que quieres analizar");
@@ -445,7 +446,7 @@ TOKEN :
         //VALOR
         try{
 
-        (<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<TRUE>|<FALSE>|<NULL>|<CADENA>|<CHAR>){guardarValorV();}}
+        (<IDENTIFICADOR>{ident = true;}|<NUMERO>|<DECIMAL>|<TRUE>|<FALSE>|<NULL>|<CADENA>|<CHAR>){guardarValorV();}}
 
         catch (ParseException e) {        
         Token t;
@@ -1093,21 +1094,21 @@ void si():
     JAVACODE
 
 
-    public boolean busquedaV(){
+    public boolean busquedaV(String str){
 
-        if(nombreVariable.isEmpty())return true;
+        if(nombreVariable.isEmpty())return false;
 
         else{
 
         for(String buscar : nombreVariable){
 
-        if(buscar.equals(nombreV))return false;
+        if(buscar.equals(str))return true;
 
         }
 
         }
 
-        return true;
+        return false;
 
         }
 
@@ -1147,9 +1148,76 @@ void si():
 
     public void declarar(){
 
+        //SI LO ASIGNADO A LA VARIABLE ES UN IDENTIFICADOR
+        if(ident){
+                
+                //BUSCAMOS SI LA VARIABLE YA FUE DEFINIDA
+
+                if(busquedaV(valorV)){
+                    //SI LA ENCONTRO Y PROCEDEMOS A VERIFICAR QUE SEAN DEL MISMO TIPO
+                        
+                       int indiceV  = nombreVariable.indexOf(valorV);
+                       
+
+                       if(tipoDato.get(indiceV).equals(tipoD)){
+                            //VERIFICA QUE LA VARIABLE ESTE INICIALIZADA
+                                
+                                
+                                if(!valorAlmacenado.get(indiceV).equals("nulo")){
+                                
+                                //METEMOS EL VALOR A LA VARIABLE CORRESPONDIENTE
+                                
+                                    valorV = valorAlmacenado.get(indiceV);
+                                }
+                                
+                                else{
+                                
+                                //NO SE HA INICIALIZADO LA VARIABLE
+                                
+                                    String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
+                                    erroresSemanticos.add(errorS);
+                                    errorS="";
+                                    nombreV="";
+                                    tipoD="";
+                                    valorV="nulo";
+                                    return; 
+                                                                    
+                                }
+
+                        
+                        }
+                        
+                        //NO SON DEL MISMO TIPO
+                        else{
+                          String errorS = "Error Semantico en la linea " + token.beginLine + " la variables no son del mismo tipo";          
+                          erroresSemanticos.add(errorS);
+                          errorS="";
+                          nombreV="";
+                          tipoD="";
+                          valorV="nulo";
+                          return; 
+                          }
+                        
+                
+                    }
+
+                //EN CASO DE QUE LA VARIABLE NO SE HA DEFINIDO
+                else{
+                    
+                String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se busca asignar no ha sido definida";          
+                erroresSemanticos.add(errorS);
+                errorS="";
+                nombreV="";
+                tipoD="";
+                valorV="nulo";
+                return;
+                }
+                
+            }
+
 
         //SI NO HAY NADA DENTRO DE LA LISTA
-        if(busquedaV()){
+        if(!busquedaV(nombreV)){
 
             if(valorV.equals("nulo")){
                 nombreVariable.add(nombreV);
