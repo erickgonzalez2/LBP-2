@@ -14,7 +14,7 @@ class Gramatica implements GramaticaConstants {
     static String nombreV ="";
     static String tipoD ="";
     static String valorV="nulo";
-    static int errores = 0;
+
     static boolean yaimpreso = false;
     public static void main(String[] args )  throws FileNotFoundException {
 
@@ -36,29 +36,12 @@ class Gramatica implements GramaticaConstants {
         analizador.Programa();
 
 
-        if(!yaimpreso){
 
-        if(errores ==0 && erroresSemanticos.isEmpty()){
-            System.out.println("Ejecucion finalizada sin errores");
-            yaimpreso=true;
-        }
-
-        else if(errores == 1 ){
-
-            System.out.println("Se ha encontrado 1 error sintactico");
-            yaimpreso=true;
-        }
-
-          else {
-            yaimpreso=true;
-            if(errores!=0)System.out.println("Se han encontrado " +errores + " errores sintacticos");
-                }
-}
 
     }catch (ParseException e) {
 
         Token t;
-              System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+
 
          do {
        t = getNextToken();
@@ -67,51 +50,79 @@ class Gramatica implements GramaticaConstants {
          } while (t!=null && t.kind != EOF  );
     }
 
-     if(!yaimpreso){
+    if(erroresLexicos.isEmpty() && erroresSintacticos.isEmpty() && erroresSemanticos.isEmpty()){
 
-        if(errores ==0 && erroresSemanticos.isEmpty()){
-            System.out.println("Ejecucion finalizada sin errores");
-            yaimpreso=true;
-        }
+    System.out.println("Ejecucion finalizada sin errores");
 
-        else if(errores == 1 ){
+    }
 
-            System.out.println("Se ha encontrado 1 error sintactico");
-            yaimpreso=true;
-        }
 
-          else {
-            yaimpreso=true;
-            System.out.println("Se han encontrado " +errores + " errores sintacticos");
+    else{
+
+        int ntotal = erroresLexicos.size()+erroresSemanticos.size()+erroresSintacticos.size();
+
+       if(ntotal==1)    System.out.println("\u005cnEjecucion finalizada con "+ntotal+" error " );
+        else    System.out.println("\u005cnEjecucion finalizada con "+ntotal+" errores " );
+
+        if(!erroresLexicos.isEmpty()){
+
+        System.out.println("");
+        if(erroresLexicos.size()==1) System.out.println("Se ha encontrado " +erroresLexicos.size() + " error lexico");
+
+
+        else System.out.println("Se han encontrado " +erroresLexicos.size() + " errores lexicos");
+
+
+            for (String impresion: erroresLexicos) {
+            System.out.println(impresion);
+
                 }
+            }
 
-                 System.out.println("");
+         if(!erroresSintacticos.isEmpty()){
 
-}
-
-    System.out.println("");
-    if(!erroresSemanticos.isEmpty()){
+        System.out.println("");
+        if(erroresSintacticos.size()==1) System.out.println("Se ha encontrado " +erroresSintacticos.size() + " error sintactico");
 
 
-    for (String impresion: erroresSemanticos) {
-    System.out.println(impresion);
-    System.out.println("");
+        else System.out.println("Se han encontrado " +erroresSintacticos.size() + " errores sintacticos");
+
+            System.out.println("");
+
+            for (String impresion: erroresSintacticos) {
+            System.out.println(impresion);
+
+                }
+            }
+
+        if(!erroresSemanticos.isEmpty()){
+
+        System.out.println("");
+        if(erroresSemanticos.size()==1) System.out.println("Se ha encontrado " +erroresSemanticos.size() + " error semantico");
+
+
+            else System.out.println("Se han encontrado " +erroresSemanticos.size() + " errores semanticos");
+
+            System.out.println("");
+
+            for (String impresion: erroresSemanticos) {
+            System.out.println(impresion);
+
+                }
+            }
+
+
+        }
+
+
     }
 
-    System.out.println("");
-    if(erroresSemanticos.size()==1) System.out.println("Se han encontrado " +erroresSemanticos.size() + " error semantico");
-
-
-    else System.out.println("Se han encontrado " +erroresSemanticos.size() + " errores semanticos");
-
-    }
-
-    }
 
 
 
 
-static String errorData(Token currentTokenVal,
+
+static void errorData(Token currentTokenVal,
                         int[][] expectedTokenSequencesVal,
                         String[] tokenImageVal){
     String eol = System.getProperty("line.separator", "\u005cn");
@@ -133,39 +144,13 @@ static String errorData(Token currentTokenVal,
       expected.append(eol).append("    ");
     }
 
-    String str0 = "";
 
-    if(currentToken.next.kind == 0) return str0;
-
+    if(currentToken.next.kind == 0)return;
 
     String retval = "";
-    if(currentToken.next.kind == 56){
-        errores++;
-        retval+="\u005cn\u005cnError Lexico, ";
-        retval += "Se ha encontrado \u005c"";
-        Token tok = currentToken.next;
-        for (int i = 0; i < maxSize; i++) {
-        if (i != 0) retval += " ";
-        if (tok.kind == 0) {
-            retval += tokenImage[0];
-            break;
-        }
-        //retval += " " + tokenImage[tok.kind];
-        //retval += " \"";
-        retval += add_escapes(tok.image);
-        retval += "\u005c"";
-        tok = tok.next;
-        }
-    retval += " en la linea " + currentToken.next.beginLine + ", columna " + currentToken.next.beginColumn;
-    retval += "." + eol;
-
-    retval += "El token no es reconocido por el lenguaje";
-    return retval;
 
 
-    }else{
-    errores++;
-    retval+="\u005cn\u005cnError Sintactico, ";
+    retval+="Error Sintactico, ";
     retval += "Se ha encontrado \u005c"";
     Token tok = currentToken.next;
     for (int i = 0; i < maxSize; i++) {
@@ -189,10 +174,13 @@ static String errorData(Token currentTokenVal,
     }
     retval += expected.toString();
 
-    return retval;
+    erroresSintacticos.add(retval);
     }
 
-  }
+
+
+
+
     static String add_escapes(String str) {
       StringBuffer retval = new StringBuffer();
       char ch;
@@ -236,7 +224,8 @@ static String errorData(Token currentTokenVal,
         }
       }
       return retval.toString();
-   }
+
+    }
 
 //----------------------------------------FIN DECLARACION TOKENS -------------------------------------------------------
 //----------------------------------------INICIO DECLARACION GRAMATICAS -------------------------------------------------------
@@ -391,7 +380,7 @@ errorSemanticoImprimir();
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -437,7 +426,7 @@ Token t;
 guardarTipoDato();
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -493,7 +482,7 @@ guardarNombreV();
 guardarValorV();
       } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -550,7 +539,7 @@ declarar();
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -588,7 +577,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -640,7 +629,7 @@ Token t;
         }
       } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -669,7 +658,7 @@ Token t;
         }
       } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -717,7 +706,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -766,7 +755,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -823,7 +812,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -896,7 +885,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -963,7 +952,7 @@ Token t;
         }
       } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1031,7 +1020,7 @@ Token t;
         }
       } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1195,7 +1184,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1220,7 +1209,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1248,7 +1237,7 @@ Token t;
       }
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1334,7 +1323,7 @@ Token t;
       jj_consume_token(DELIMITER);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1347,7 +1336,7 @@ Token t;
       jj_consume_token(LLAVEI);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1360,7 +1349,7 @@ Token t;
       jj_consume_token(LLAVED);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1373,7 +1362,7 @@ Token t;
       jj_consume_token(PARI);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1386,7 +1375,7 @@ Token t;
       jj_consume_token(PARD);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1399,7 +1388,7 @@ Token t;
       jj_consume_token(IDENTIFICADOR);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1412,7 +1401,7 @@ Token t;
       jj_consume_token(IGUAL);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1425,7 +1414,7 @@ Token t;
       jj_consume_token(NEGACION);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1438,7 +1427,7 @@ Token t;
       jj_consume_token(NUMERO);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1451,7 +1440,7 @@ Token t;
       jj_consume_token(DECIMAL);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1464,7 +1453,7 @@ Token t;
       jj_consume_token(CADENA);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1477,7 +1466,7 @@ Token t;
       jj_consume_token(CHAR);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1490,7 +1479,7 @@ Token t;
       jj_consume_token(ELSE);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1503,7 +1492,7 @@ Token t;
       jj_consume_token(IF);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
+        errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
         System.out.println("");
          do {
        t = getNextToken();
@@ -1516,8 +1505,7 @@ Token t;
       jj_consume_token(0);
     } catch (ParseException e) {
 Token t;
-        System.out.println(errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage));
-        System.out.println("");
+
          do {
        t = getNextToken();
          } while ( t!=null );
@@ -1529,10 +1517,10 @@ Token t;
 error();
   }
 
-  static public void error() throws ParseException {errores++;
-
-    System.out.println("\u005cnSe ha encontrado un error lexico \u005c"" + token.image+"\u005c" en la linea "+token.beginLine
-    +" columna "+token.beginColumn+"\u005cn");
+  static public void error() throws ParseException {String errorL ="\u005cnError Lexico \u005c"" + token.image+"\u005c" en la linea "+token.beginLine
+    +" columna "+token.beginColumn+"\u005cn";
+    erroresLexicos.add(errorL);
+    errorL="";
   }
 
   static public void guardarNombreV() throws ParseException {nombreV=token.image;
