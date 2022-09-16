@@ -18,7 +18,7 @@ class Gramatica implements GramaticaConstants {
     static String valorV="nulo";
     static boolean ident = false;
     static boolean decAritmetica = false;
-    static boolean asignacion = false;
+    static boolean asignacion_a = false;
 
     public static void main(String[] args )  throws FileNotFoundException {
 
@@ -787,6 +787,7 @@ guardarNombreV();
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IDENTIFICADOR:{
         jj_consume_token(IDENTIFICADOR);
+ident = true;
         break;
         }
       case NUMERO:{
@@ -835,7 +836,7 @@ Token t;
             t.kind != CADENA && t.kind != CHAR && t != null && t.kind != EOF );
     }
     delimiter();
-asignacion = true;;declarar();
+asignar();
   }
 
 //----------------------------------------COMPARACION LOGICA -------------------------------------------------------
@@ -1799,11 +1800,7 @@ error();
             nombreV="";
             tipoD="";
             valorV="nulo";
-
-
             return;
-
-
             }
         }
 
@@ -1990,6 +1987,186 @@ error();
                 errorS="";
 
         }
+  }
+
+  static public void asignar() throws ParseException {//VERIFICAMOS QUE LA VARIABLE YA FUE DEFINIDA
+
+        if(busquedaV(nombreV)){
+
+        //OBTENEMOS SU Ã?NDICE Y SU TIPO DE DATO
+
+        int indice = nombreVariable.indexOf(nombreV);
+        tipoD = tipoDato.get(indice);
+
+        //SI LO QUE SE VA A ASIGNAR ES OTRA VARIABLE
+
+            if(ident){
+            ident = false;
+
+                //BUSCAMOS SI LA VARIABLE YA FUE DEFINIDA
+
+                if(busquedaV(valorV)){
+                    //SI LA ENCONTRO Y PROCEDEMOS A VERIFICAR QUE SEAN DEL MISMO TIPO
+
+                       int indiceV  = nombreVariable.indexOf(valorV);
+
+
+                       if(tipoDato.get(indiceV).equals(tipoD)){
+                            //VERIFICA QUE LA VARIABLE ESTE INICIALIZADA
+
+
+                                if(!valorAlmacenado.get(indiceV).equals("nulo")){
+
+                                //METEMOS EL VALOR A LA VARIABLE CORRESPONDIENTE
+
+                                    valorV = valorAlmacenado.get(indiceV);
+                                }
+
+                                else{
+
+                                //NO SE HA INICIALIZADO LA VARIABLE
+
+                                    String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";
+                                    erroresSemanticos.add(errorS);
+                                    errorS="";
+                                    nombreV="";
+                                    tipoD="";
+                                    valorV="nulo";
+                                    return;
+
+                                }
+
+
+                        }
+
+                        //NO SON DEL MISMO TIPO
+                        else{
+                          String errorS = "Error Semantico en la linea " + token.beginLine + " la variables no son del mismo tipo";
+                          erroresSemanticos.add(errorS);
+                          errorS="";
+                          nombreV="";
+                          tipoD="";
+                          valorV="nulo";
+                          return;
+                          }
+
+
+                    }
+
+                //EN CASO DE QUE LA VARIABLE NO SE HA DEFINIDO
+                else{
+
+                String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se busca asignar no ha sido definida";
+                erroresSemanticos.add(errorS);
+                errorS="";
+                nombreV="";
+                tipoD="";
+                valorV="nulo";
+                return;
+                }
+
+            }
+
+
+
+
+
+        }
+
+        else{
+
+            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no ha sido definida";
+            erroresSemanticos.add(errorS);
+            errorS="";
+            return;
+        }
+
+                int band = 0;
+                switch(tipoD){
+
+                case "entero":
+                        if(isNumeric(valorV)){
+                                nombreVariable.add(nombreV);
+                                nombreV="";
+                                tipoDato.add(tipoD);
+                                tipoD="";
+                                valorAlmacenado.add(valorV);
+                                valorV="nulo";
+                                band=1;
+                              }
+                          break;
+
+                case "flotante":
+                        if(isFloat(valorV)){
+                                nombreVariable.add(nombreV);
+                                nombreV="";
+                                tipoDato.add(tipoD);
+                                tipoD="";
+                                valorAlmacenado.add(valorV);
+                                valorV="nulo";
+                                band=1;
+                              }
+                          break;
+
+                case "cadena":
+
+                    if(valorV.charAt(0)=='\u005c"'){
+
+                    nombreVariable.add(nombreV);
+                    nombreV="";
+                    tipoDato.add(tipoD);
+                    tipoD="";
+                    valorAlmacenado.add(valorV);
+                    valorV="nulo";
+                    band=1;
+
+                    }
+                    break;
+
+                case "caracter":
+
+                    if(valorV.charAt(0)=='\u005c''){
+
+                    nombreVariable.add(nombreV);
+                    nombreV="";
+                    tipoDato.add(tipoD);
+                    tipoD="";
+                    valorAlmacenado.add(valorV);
+                    valorV="nulo";
+                    band=1;
+
+                    }
+                    break;
+
+                 case "bool":
+
+                    if(valorV.equals("verdadero")||valorV.equals("falso")){
+
+                    nombreVariable.add(nombreV);
+                    nombreV="";
+                    tipoDato.add(tipoD);
+                    tipoD="";
+                    valorAlmacenado.add(valorV);
+                    valorV="nulo";
+                    band=1;
+
+                    }
+                    break;
+
+
+
+            }
+
+            if(band==0){
+
+                String errorS = "Error Semantico en la linea " + token.beginLine + " el tipo de dato y el valor no coinciden";
+                erroresSemanticos.add(errorS);
+                errorS="";
+                nombreV="";
+                tipoD="";
+                valorV="nulo";
+
+            }
   }
 
   static private boolean jj_2_1(int xla)

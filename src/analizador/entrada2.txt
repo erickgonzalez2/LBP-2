@@ -1,7 +1,8 @@
 
 principal(){
 
-	leer (a);	
+
+	
 
 	declarar flotante on = 7.534 ;
 	
@@ -12,8 +13,9 @@ principal(){
 	imprimir(b);
 	
 	declarar cadena str = "hola";
+	
 
-	declarar_a entero z = on+3+5+on;
+	declarar entero uno;
 
-	declarar entero uno = str;
+	asignacion uno = 2;
 }
