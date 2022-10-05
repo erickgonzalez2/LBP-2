@@ -1,24 +1,7 @@
 
 principal(){
 
-
+        leer(a);   
 	
-
-	declarar flotante on = 7.534 ;
-	
-	declarar entero b = 9;
-
-	declarar flotante o = on ;
-
-	imprimir(b);
-	
-	declarar cadena str = "hola";
-	
-
-	declarar entero uno;
-
-	asignacion_a uno = 2 / 3;
-
-
 
 }

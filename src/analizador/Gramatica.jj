@@ -17,14 +17,20 @@ class Gramatica{
     static ArrayList<String> nombreVariable = new ArrayList<String>(); 
     static ArrayList<String> tipoDato = new ArrayList<String>(); 
     static ArrayList<String> valorAlmacenado = new ArrayList<String>(); 
-    static ArrayList<String> erroresLexicos = new ArrayList<String>(); 
-    static ArrayList<String> erroresSintacticos = new ArrayList<String>(); 
-    static ArrayList<String> erroresSemanticos = new ArrayList<String>(); 
+
+    static ArrayList<String> errores = new ArrayList<String>();     
+    
     static ArrayList<String> colaOperacion = new ArrayList<String>();
+    static ArrayList<String> colaComparacion = new ArrayList<String>();
 
     static String nombreV ="";
     static String tipoD ="";
     static String valorV="nulo";
+
+    static int columnaV = -1;
+    static int columnaTd = -1;
+    static int columnaVa = -1;
+
     static boolean ident = false;
     static boolean decAritmetica = false;   
     static boolean asignacion_a = false;
@@ -63,76 +69,31 @@ class Gramatica{
          } while (t!=null && t.kind != EOF  );
     }
     
-    if(erroresLexicos.isEmpty() && erroresSintacticos.isEmpty() && erroresSemanticos.isEmpty()){
+    if(errores.isEmpty()){
 
     System.out.println("Ejecucion finalizada sin errores");
 
     }
 
-
     else{
         
-        int ntotal = erroresLexicos.size()+erroresSemanticos.size()+erroresSintacticos.size();
+        int ntotal = errores.size();
         
        if(ntotal==1)    System.out.println("\nEjecucion finalizada con "+ntotal+" error " );
         else    System.out.println("\nEjecucion finalizada con "+ntotal+" errores " );
         
-        if(!erroresLexicos.isEmpty()){
+        if(!errores.isEmpty()){
     
         System.out.println("");
-        if(erroresLexicos.size()==1) System.out.println("Se ha encontrado " +erroresLexicos.size() + " error lexico");
-
-
-        else System.out.println("Se han encontrado " +erroresLexicos.size() + " errores lexicos");
-
             
-            for (String impresion: erroresLexicos) {
-            System.out.println(impresion);
-            
+            for (String impresion: errores) {
+            System.out.println(impresion);            
                 }   
             }
-
-         if(!erroresSintacticos.isEmpty()){
-    
-        System.out.println("");
-        if(erroresSintacticos.size()==1) System.out.println("Se ha encontrado " +erroresSintacticos.size() + " error sintactico");
-
-
-        else System.out.println("Se han encontrado " +erroresSintacticos.size() + " errores sintacticos");
-            
-            System.out.println("");
-
-            for (String impresion: erroresSintacticos) {
-            System.out.println(impresion);
-            
-                }   
-            }
-    
-        if(!erroresSemanticos.isEmpty()){
-    
-        System.out.println("");
-        if(erroresSemanticos.size()==1) System.out.println("Se ha encontrado " +erroresSemanticos.size() + " error semantico");
-
-
-            else System.out.println("Se han encontrado " +erroresSemanticos.size() + " errores semanticos");
-
-            System.out.println(""); 
-
-            for (String impresion: erroresSemanticos) {
-            System.out.println(impresion);
-            
-                }   
-            }
-    
-
-        }
-     
-
+        }     
+        
     }
-
     
-
-
 
 
 static void errorData(Token currentTokenVal,
@@ -187,7 +148,7 @@ static void errorData(Token currentTokenVal,
     }
     retval += expected.toString();
 
-    erroresSintacticos.add(retval);
+    errores.add(retval);
     }
 
 
@@ -641,7 +602,7 @@ TOKEN :
 
 
         //PRIMER TERMINO DEL IF
-        try{((<NEGACION>(<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>))|<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>)}
+        try{((<NEGACION>(<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>))|<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>){guardarColaComparacion();}}
 
         catch (ParseException e) {        
         Token t;
@@ -658,7 +619,7 @@ TOKEN :
         //OPERADOR
         (try{(<IGUALDAD> | <MAYOR> | <MAYORI> | <MENOR> | <MENORI>
         | <DIFERENCIA> | <AND> | <OR>
-        )}
+        ){guardarColaComparacion();}}
 
         catch (ParseException e) {        
         Token t;
@@ -674,7 +635,7 @@ TOKEN :
 
 
         //SEGUNDO TERMINO
-        try{((<NEGACION>(<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>))|<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>)}
+        try{((<NEGACION>(<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>))|<IDENTIFICADOR>|<NUMERO>|<DECIMAL>|<CADENA>|<CHAR>){guardarColaComparacion();}}
          catch (ParseException e) {        
         Token t;
         errorData(e.currentToken,e.expectedTokenSequences,e.tokenImage);
@@ -1024,6 +985,9 @@ void si():
             }
    
     }
+
+
+//--------------------------------------------------------------------------------------------------------------------------------
     
     JAVACODE
     
@@ -1033,7 +997,7 @@ void si():
     
     String errorL ="\nError Lexico \"" + token.image+"\" en la linea "+token.beginLine
     +" columna "+token.beginColumn+"\n";
-    erroresLexicos.add(errorL);
+    errores.add(errorL);
     errorL="";
     }
 
@@ -1041,7 +1005,8 @@ void si():
 
     public void guardarNombreV(){
         nombreV=token.image;        
-
+        
+        columnaV = token.beginColumn;
 
     }
 
@@ -1049,7 +1014,7 @@ void si():
 
     public void guardarTipoDato(){
         tipoD=token.image;        
-
+        columnaTd = token.beginColumn;
 
     }
 
@@ -1057,7 +1022,7 @@ void si():
 
     public void guardarValorV(){
         valorV=token.image;        
-
+        columnaVa = token.beginColumn;
 
     }
 
@@ -1128,8 +1093,8 @@ void si():
 
            if(valorAlmacenado.get(pos).equals("nulo")){
 
-           String errorS = "Error Semantico en la linea " + token.beginLine + " no se ha asignado un valor a la variable";          
-            erroresSemanticos.add(errorS);
+           String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ token.beginColumn+ " no se ha asignado un valor a la variable";              
+            errores.add(errorS);
 
             }
 
@@ -1137,8 +1102,8 @@ void si():
 
     else{
 
-    String errorS = "Error Semantico en la linea " + token.beginLine + " no se ha declarado la variable";          
-    erroresSemanticos.add(errorS);
+    String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ token.beginColumn+ " no se ha asignado un valor a la variable";              
+    errores.add(errorS);
 
     }
 
@@ -1147,12 +1112,13 @@ void si():
     
     JAVACODE
 
+
     public void errorSemanticoLeer(){
 
         if(!busquedaV(nombreV)){
 
-            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se intenta leer no se ha declarado";          
-            erroresSemanticos.add(errorS);
+            String errorS = "Error Semantico en la linea " + token.beginLine + ", columna "+ columnaV +", la variable que se intenta leer no se ha declarado";          
+            errores.add(errorS);
             nombreV="";
 
             }
@@ -1164,6 +1130,13 @@ void si():
     public void guardarColaOperacion(){
 
     colaOperacion.add(token.image);
+    }
+
+    JAVACODE 
+
+    public void guardarColaComparacion(){
+
+    colaComparacion.add(token.image);
     }
 
 
@@ -1200,7 +1173,7 @@ void si():
                 else if(isFloat(s1)){
 
                         String errorS = "Error Semantico en la linea " + token.beginLine + " los operandos son de tipos distintos";          
-                        erroresSemanticos.add(errorS);
+                        errores.add(errorS);
                         return false;
       
                         }
@@ -1218,7 +1191,7 @@ void si():
                            
                            if(s2.equals("nulo")){
                             String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
-                            erroresSemanticos.add(errorS);
+                            errores.add(errorS);
                             return false;
                             
                             }
@@ -1235,7 +1208,7 @@ void si():
                         catch(NumberFormatException ex){
                                 
                             String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";          
-                            erroresSemanticos.add(errorS);
+                            errores.add(errorS);
                             return false;
 
                         }
@@ -1246,7 +1219,7 @@ void si():
                       else{
 
                             String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";          
-                            erroresSemanticos.add(errorS);
+                            errores.add(errorS);
                             return false;
 
                     }
@@ -1296,7 +1269,7 @@ void si():
                            
                            if(s2.equals("nulo")){
                             String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
-                            erroresSemanticos.add(errorS);
+                            errores.add(errorS);
                             return false;
                             
                             }
@@ -1313,7 +1286,7 @@ void si():
                         catch(NumberFormatException ex){
                                 
                             String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";          
-                            erroresSemanticos.add(errorS);
+                            errores.add(errorS);
                             return false;
 
                         }
@@ -1324,7 +1297,7 @@ void si():
                       else{
 
                             String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";          
-                            erroresSemanticos.add(errorS);
+                            errores.add(errorS);
                             return false;
 
                     }
@@ -1343,7 +1316,7 @@ void si():
         else {
         
         String errorS = "Error Semantico en la linea " + token.beginLine + " conversion de tipos innacessible";          
-        erroresSemanticos.add(errorS);
+        errores.add(errorS);
         colaOperacion.clear();
         
         return false;
@@ -1396,8 +1369,8 @@ void si():
                                 
                                 //NO SE HA INICIALIZADO LA VARIABLE
                                 
-                                    String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
-                                    erroresSemanticos.add(errorS);
+                                    String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaVa + " la variable no se ha inicializado";          
+                                    errores.add(errorS);
                                     errorS="";
                                     nombreV="";
                                     tipoD="";
@@ -1411,8 +1384,8 @@ void si():
                         
                         //NO SON DEL MISMO TIPO
                         else{
-                          String errorS = "Error Semantico en la linea " + token.beginLine + " la variables no son del mismo tipo";          
-                          erroresSemanticos.add(errorS);
+                          String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaVa+ " la variables no son del mismo tipo";          
+                          errores.add(errorS);
                           errorS="";
                           nombreV="";
                           tipoD="";
@@ -1426,8 +1399,8 @@ void si():
                 //EN CASO DE QUE LA VARIABLE NO SE HA DEFINIDO
                 else{
                     
-                String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se busca asignar no ha sido definida";          
-                erroresSemanticos.add(errorS);
+                String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaVa +" la variable que se busca asignar no ha sido definida";          
+                errores.add(errorS);
                 errorS="";
                 nombreV="";
                 tipoD="";
@@ -1530,8 +1503,8 @@ void si():
 
             if(band==0){
 
-                String errorS = "Error Semantico en la linea " + token.beginLine + " el tipo de dato y el valor no coinciden";          
-                erroresSemanticos.add(errorS);
+                String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+ columnaVa+" el tipo de dato y el valor no coinciden";          
+                errores.add(errorS);
                 errorS="";
                 nombreV="";
                 tipoD="";
@@ -1547,8 +1520,8 @@ void si():
 
     else{
 
-    String errorS = "Error Semantico en la linea " + token.beginLine + " la variable ya ha sido definida previamente";          
-                erroresSemanticos.add(errorS);
+    String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+ columnaV +" la variable ya ha sido definida previamente";          
+                errores.add(errorS);
                 errorS="";
 
         }
@@ -1612,8 +1585,8 @@ void si():
                                 
                                 //NO SE HA INICIALIZADO LA VARIABLE
                                 
-                                    String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";          
-                                    erroresSemanticos.add(errorS);
+                                    String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+ columnaVa+ " la variable no se ha inicializado";          
+                                    errores.add(errorS);
                                     errorS="";
                                     nombreV="";
                                     tipoD="";
@@ -1627,8 +1600,8 @@ void si():
                         
                         //NO SON DEL MISMO TIPO
                         else{
-                          String errorS = "Error Semantico en la linea " + token.beginLine + " la variables no son del mismo tipo";          
-                          erroresSemanticos.add(errorS);
+                          String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+ columnaVa+" la variables no son del mismo tipo";          
+                          errores.add(errorS);
                           errorS="";
                           nombreV="";
                           tipoD="";
@@ -1642,8 +1615,8 @@ void si():
                 //EN CASO DE QUE LA VARIABLE NO SE HA DEFINIDO
                 else{
                     
-                String errorS = "Error Semantico en la linea " + token.beginLine + " la variable que se busca asignar no ha sido definida";          
-                erroresSemanticos.add(errorS);
+                String errorS = "Error Semantico en la linea " + token.beginLine +", columna " +columnaVa +" la variable que se busca asignar no ha sido definida";          
+                errores.add(errorS);
                 errorS="";
                 nombreV="";
                 tipoD="";
@@ -1661,8 +1634,8 @@ void si():
 
         else{
 
-            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no ha sido definida";          
-            erroresSemanticos.add(errorS);
+            String errorS = "Error Semantico en la linea " + token.beginLine + ", columna "+ columnaV+ " la variable no ha sido definida";          
+            errores.add(errorS);
             errorS="";
             return;
         }
@@ -1745,8 +1718,8 @@ void si():
 
             if(band==0){
 
-                String errorS = "Error Semantico en la linea " + token.beginLine + " el tipo de dato y el valor no coinciden";          
-                erroresSemanticos.add(errorS);
+                String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaVa + " el tipo de dato y el valor no coinciden";          
+                errores.add(errorS);
                 errorS="";
                 nombreV="";
                 tipoD="";
