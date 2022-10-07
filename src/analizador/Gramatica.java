@@ -12,7 +12,11 @@ class Gramatica implements GramaticaConstants {
     static ArrayList<String> errores = new ArrayList<String>();
 
     static ArrayList<String> colaOperacion = new ArrayList<String>();
+    static ArrayList<Integer> posicionTokenOperacion = new ArrayList<Integer>();
+
+
     static ArrayList<String> colaComparacion = new ArrayList<String>();
+    static ArrayList<Integer> posicionTokenComparacion = new ArrayList<Integer>();
 
     static String nombreV ="";
     static String tipoD ="";
@@ -21,6 +25,10 @@ class Gramatica implements GramaticaConstants {
     static int columnaV = -1;
     static int columnaTd = -1;
     static int columnaVa = -1;
+
+    static int columnaOp = -1;
+
+
 
     static boolean ident = false;
     static boolean decAritmetica = false;
@@ -307,7 +315,7 @@ static void errorData(Token currentTokenVal,
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IDENTIFICADOR:{
         jj_consume_token(IDENTIFICADOR);
-errorSemanticoImprimir();
+guardarNombreV();
         break;
         }
       case NUMERO:{
@@ -356,6 +364,7 @@ Token t;
     }
     pard();
     delimiter();
+errorSemanticoImprimir();
   }
 
 //---------------------------------------- DECLARACIONES -------------------------------------------------------
@@ -519,6 +528,7 @@ Token t;
 guardarNombreV();
     igual();
     operacion();
+columnaOp = token.beginColumn;
     delimiter();
 decAritmetica=true;declarar();
   }
@@ -689,6 +699,7 @@ Token t;
                t.kind != MODULOIGUAL && t!=null && t.kind != EOF );
     }
     operacion();
+columnaOp = token.beginColumn;
     delimiter();
 asignacion_a = true; asignar();
   }
@@ -1558,15 +1569,15 @@ error();
         return false;
   }
 
-  static public void errorSemanticoImprimir() throws ParseException {int pos = nombreVariable.indexOf(token.image);
+  static public void errorSemanticoImprimir() throws ParseException {int pos = nombreVariable.indexOf(nombreV);
 
     if(pos !=-1){
 
 
            if(valorAlmacenado.get(pos).equals("nulo")){
 
-           String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ token.beginColumn+ " no se ha asignado un valor a la variable";
-            errores.add(errorS);
+           String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ columnaV+ " no se ha asignado un valor a la variable";
+           errores.add(errorS);
 
             }
 
@@ -1574,7 +1585,7 @@ error();
 
     else{
 
-    String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ token.beginColumn+ " no se ha asignado un valor a la variable";
+    String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ columnaV+ " no se ha asignado un valor a la variable";
     errores.add(errorS);
 
     }
@@ -1590,12 +1601,17 @@ error();
   }
 
   static public void guardarColaOperacion() throws ParseException {colaOperacion.add(token.image);
+
+    posicionTokenOperacion.add(Integer.valueOf(token.beginColumn));
   }
 
   static public void guardarColaComparacion() throws ParseException {colaComparacion.add(token.image);
+    posicionTokenComparacion.add(Integer.valueOf(token.beginColumn));
   }
 
   static public boolean realizarOperacion() throws ParseException {int acc = 1;
+        String s1;
+        Integer columnaOperacion;
 
         //SI ES UN ENTERO
         if(tipoD.equals("entero")){
@@ -1603,7 +1619,10 @@ error();
 
 
 
-        for(String s1 : colaOperacion){
+        for(int iterador = 0;iterador<colaOperacion.size();iterador++){
+
+                s1 = colaOperacion.get(iterador);
+                columnaOperacion = posicionTokenOperacion.get(iterador);
 
                 //SI ES UN OPERADOR
                 if(s1.equals("+"))acc=1;
@@ -1623,7 +1642,7 @@ error();
 
                 else if(isFloat(s1)){
 
-                        String errorS = "Error Semantico en la linea " + token.beginLine + " los operandos son de tipos distintos";
+                        String errorS = "Error Semantico en la linea " + token.beginLine +", columna"+ columnaOperacion +" los operandos son de tipos distintos";
                         errores.add(errorS);
                         return false;
 
@@ -1641,7 +1660,7 @@ error();
                            String s2 = valorAlmacenado.get(indice);
 
                            if(s2.equals("nulo")){
-                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";
+                            String errorS = "Error Semantico en la linea " + token.beginLine + ", columna "+columnaOperacion+" la variable no se ha inicializado";
                             errores.add(errorS);
                             return false;
 
@@ -1658,7 +1677,7 @@ error();
                         }
                         catch(NumberFormatException ex){
 
-                            String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";
+                            String errorS = "Error Semantico en la linea " + token.beginLine +", columna " +columnaOperacion+" tipos incompatibles";
                             errores.add(errorS);
                             return false;
 
@@ -1669,7 +1688,7 @@ error();
                         //NO SE ENCONTRO LA VARIABLE
                       else{
 
-                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";
+                            String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaOperacion+ " la variable no se ha declarado";
                             errores.add(errorS);
                             return false;
 
@@ -1690,7 +1709,10 @@ error();
         else if(tipoD.equals("flotante")){
         float valor = 0;
 
-            for(String s1 : colaOperacion){
+            for(int iterador = 0;iterador<colaOperacion.size();iterador++){
+
+                s1 = colaOperacion.get(iterador);
+                columnaOperacion = posicionTokenOperacion.get(iterador);
 
                 if(s1.equals("+"))acc=1;
                 else if(s1.equals("-"))acc=2;
@@ -1719,7 +1741,7 @@ error();
                            String s2 = valorAlmacenado.get(indice);
 
                            if(s2.equals("nulo")){
-                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha inicializado";
+                            String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaOperacion+" la variable no se ha inicializado";
                             errores.add(errorS);
                             return false;
 
@@ -1736,7 +1758,7 @@ error();
                         }
                         catch(NumberFormatException ex){
 
-                            String errorS = "Error Semantico en la linea " + token.beginLine + " tipos incompatibles";
+                            String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaOperacion+ " tipos incompatibles";
                             errores.add(errorS);
                             return false;
 
@@ -1747,7 +1769,7 @@ error();
                         //NO SE ENCONTRO LA VARIABLE
                       else{
 
-                            String errorS = "Error Semantico en la linea " + token.beginLine + " la variable no se ha declarado";
+                            String errorS = "Error Semantico en la linea " + token.beginLine +", columna"+ columnaOperacion +" la variable no se ha declarado";
                             errores.add(errorS);
                             return false;
 
@@ -1766,7 +1788,7 @@ error();
 
         else {
 
-        String errorS = "Error Semantico en la linea " + token.beginLine + " conversion de tipos innacessible";
+        String errorS = "Error Semantico en la linea " + token.beginLine + ", columna "+ columnaOp +" conversion de tipos innacessible";
         errores.add(errorS);
         colaOperacion.clear();
 
@@ -2189,6 +2211,12 @@ error();
     finally { jj_save(2, xla); }
   }
 
+  static private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_13()
  {
     if (jj_scan_token(IF)) return true;
@@ -2231,12 +2259,6 @@ error();
   static private boolean jj_3R_14()
  {
     if (jj_scan_token(LLAVEI)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
     return false;
   }
 
