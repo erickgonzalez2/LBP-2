@@ -1,7 +1,14 @@
 
 principal(){
 
-        leer(a);   
+  declarar cadena b = "go";		
 	
+  declarar entero a = 9;
+	
+
+
+        si(a>b){
+
+	}    
 
 }

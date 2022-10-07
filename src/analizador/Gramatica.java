@@ -1030,6 +1030,7 @@ Token t;
     comparacionLogica();
     pard();
     llavei();
+evaluarComparacion();
     label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1644,6 +1645,8 @@ error();
 
                         String errorS = "Error Semantico en la linea " + token.beginLine +", columna"+ columnaOperacion +" los operandos son de tipos distintos";
                         errores.add(errorS);
+                        colaOperacion.clear();
+                        posicionTokenOperacion.clear();
                         return false;
 
                         }
@@ -1662,6 +1665,8 @@ error();
                            if(s2.equals("nulo")){
                             String errorS = "Error Semantico en la linea " + token.beginLine + ", columna "+columnaOperacion+" la variable no se ha inicializado";
                             errores.add(errorS);
+                            colaOperacion.clear();
+                            posicionTokenOperacion.clear();
                             return false;
 
                             }
@@ -1679,6 +1684,8 @@ error();
 
                             String errorS = "Error Semantico en la linea " + token.beginLine +", columna " +columnaOperacion+" tipos incompatibles";
                             errores.add(errorS);
+                            colaOperacion.clear();
+                            posicionTokenOperacion.clear();
                             return false;
 
                         }
@@ -1690,6 +1697,8 @@ error();
 
                             String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaOperacion+ " la variable no se ha declarado";
                             errores.add(errorS);
+                            colaOperacion.clear();
+                            posicionTokenOperacion.clear();
                             return false;
 
                     }
@@ -1701,6 +1710,7 @@ error();
             }
 
             colaOperacion.clear();
+            posicionTokenOperacion.clear();
             valorV = Integer.toString(valor);
             return true;
 
@@ -1743,6 +1753,8 @@ error();
                            if(s2.equals("nulo")){
                             String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaOperacion+" la variable no se ha inicializado";
                             errores.add(errorS);
+                            colaOperacion.clear();
+                            posicionTokenOperacion.clear();
                             return false;
 
                             }
@@ -1760,6 +1772,8 @@ error();
 
                             String errorS = "Error Semantico en la linea " + token.beginLine +", columna "+columnaOperacion+ " tipos incompatibles";
                             errores.add(errorS);
+                            colaOperacion.clear();
+                            posicionTokenOperacion.clear();
                             return false;
 
                         }
@@ -1771,6 +1785,8 @@ error();
 
                             String errorS = "Error Semantico en la linea " + token.beginLine +", columna"+ columnaOperacion +" la variable no se ha declarado";
                             errores.add(errorS);
+                            colaOperacion.clear();
+                            posicionTokenOperacion.clear();
                             return false;
 
                     }
@@ -1791,6 +1807,7 @@ error();
         String errorS = "Error Semantico en la linea " + token.beginLine + ", columna "+ columnaOp +" conversion de tipos innacessible";
         errores.add(errorS);
         colaOperacion.clear();
+        posicionTokenOperacion.clear();
 
         return false;
 
@@ -2185,6 +2202,167 @@ error();
                 valorV="nulo";
 
             }
+  }
+
+  static public void evaluarComparacion() throws ParseException {String v1 = "";
+    String v2 = "";
+    String td1 = "";
+    String td2 = "";
+    int f1 = 0;
+    int f2 = 0;
+    int nf = 1;
+
+
+//1	IGUALDAD : "=="     
+//2   	MAYOR : ">"   
+//3	MAYORI : ">=" 
+//4	MENOR : "<"   
+//5	MENORI : "<=" 
+//6	DIFERENCIA : "!=" 
+//7	NEGACION : "!"    
+//8	AND : "&&"        
+//9	OR : "||"        
+
+    String s1;
+    Integer columnaComparacion;
+    for(int i=0;i<colaComparacion.size();i++){
+
+        s1 = colaComparacion.get(i);
+
+        columnaComparacion = posicionTokenComparacion.get(i);
+        char s2 = s1.charAt(0);
+
+        if(s1.equals("!")||s1.equals("||")||s1.equals("&&")){
+
+        if(f1==0)f1 = 1;
+
+        else if(f2==0)f2=1;
+
+        }
+
+        else if(isNumeric(s1)||isFloat(s1)){
+
+            if(nf==1){
+            v1 = s1;
+            td1 = "entero";
+            nf = 2;
+            }
+
+            else{
+            v2 = s1;
+            td2 = "entero";
+            nf = 3;
+            }
+        }
+
+        else if(s2=='\u005c"'){
+
+            if(nf==1){
+            v1 = s1;
+            td1 = "cadena";
+            nf = 2;
+            }
+
+            else{
+            v2 = s1;
+            td2 = "cadena";
+            nf = 3;
+            }
+        }
+
+        else if(s2=='\u005c''){
+
+            if(nf==1){
+            v1 = s1;
+            td1 = "caracter";
+            nf = 2;
+            }
+
+            else{
+            v2 = s1;
+            td2 = "caracter";
+            nf = 3;
+            }
+        }
+
+        else if(!s1.equals("==") && !s1.equals("!=") && !s1.equals(">") && !s1.equals(">=") &&
+                !s1.equals("<") && !s1.equals("<=")){
+                //ENTONCES ES UNA VARIABLE
+
+                   if(busquedaV(s1)){
+
+                            int indice = nombreVariable.indexOf(s1);
+                                if(nf==1){
+                                            v1 = s1;
+                                            td1 = tipoDato.get(indice);
+                                            nf = 2;
+                                            }
+
+                                            else{
+                                            v2 = s1;
+                                            td2 = tipoDato.get(indice);
+                                            nf = 3;
+                                            }
+
+                               if( valorAlmacenado.get(indice).equals( "nulo" ) ){
+                                    //La variable no ha sido inicialiizada
+
+                                     String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + columnaComparacion +
+                                                     " la variable no se ha inicializado";
+                                     errores.add(errorS);
+                                     colaComparacion.clear();
+                                     posicionTokenComparacion.clear();
+                                     return;
+                                    }
+
+                        }
+                            //NO ENCONTRO LA VARIABLE
+                    else{
+
+                         String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + columnaComparacion +
+                                                     " la variable no ha sido definida";
+                         errores.add(errorS);
+                         colaComparacion.clear();
+                        posicionTokenComparacion.clear();
+                         return;
+                    }
+            }
+
+
+            if(nf==3){
+
+                    if(f1 != 1 && f2 != 1){
+
+                        if(!td1.equals("entero") && !td2.equals("flotante") ||
+                           !td1.equals("flotante") && !td1.equals("entero")||
+                           !td1.equals(td2)){
+
+                              //TIPOS DE DATOS DISTINTOS
+
+                              String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + columnaComparacion +
+                                                     " tipos de datos distintos";
+                              errores.add(errorS);
+                              colaComparacion.clear();
+                              posicionTokenComparacion.clear();
+                              return;
+                        }
+
+                    }
+
+                 v1 = "";
+                 v2 = "";
+                 td1 = "";
+                 td2 = "";
+                 f1 = 0;
+                 f2 = 0;
+                 nf = 1;
+
+            }
+
+
+    }
+    colaComparacion.clear();
+    posicionTokenComparacion.clear();
   }
 
   static private boolean jj_2_1(int xla)

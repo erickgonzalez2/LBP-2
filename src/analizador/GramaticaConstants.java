@@ -144,7 +144,7 @@ public interface GramaticaConstants {
     "\"principal\"",
     "\"imprimir\"",
     "\"leer\"",
-    "\"cuando\"",
+    "\"si\"",
     "\"sino\"",
     "\"romper\"",
     "\"ciclo_for\"",
