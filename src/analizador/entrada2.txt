@@ -1,14 +1,12 @@
 
 principal(){
 
-  declarar cadena b = "go";		
-	
-  declarar entero a = 9;
-	
+declarar entero i;
+declarar entero hola = 10;
+
+ciclo_for(i=0;i<hola;i++){
 
 
-        si(a>b){
-
-	}    
+	}
 
 }

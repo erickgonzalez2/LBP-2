@@ -3,6 +3,8 @@
 import java.util.*;
 import java.io.*;
 
+
+
 class Gramatica implements GramaticaConstants {
 
     static ArrayList<String> nombreVariable = new ArrayList<String>();
@@ -29,10 +31,23 @@ class Gramatica implements GramaticaConstants {
     static int columnaOp = -1;
 
 
-
     static boolean ident = false;
     static boolean decAritmetica = false;
     static boolean asignacion_a = false;
+
+    // VARIABLES PARA CICLO FOR
+
+    static String variable1;
+    static String variable2;
+    static String variable3;
+
+    static int colVariable1;
+    static int colVariable2;
+    static int colVariable3;
+
+    static int esV = 0;
+
+
 
     public static void main(String[] args )  throws FileNotFoundException {
 
@@ -72,6 +87,11 @@ class Gramatica implements GramaticaConstants {
 
     System.out.println("Ejecucion finalizada sin errores");
 
+    //GENERAMOS CÓDIGO INTERMEDIO
+
+    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str);
+
+    System.out.println(generadorIntermedio.getEntrada());
     }
 
     else{
@@ -149,10 +169,6 @@ static void errorData(Token currentTokenVal,
 
     errores.add(retval);
     }
-
-
-
-
 
     static String add_escapes(String str) {
       StringBuffer retval = new StringBuffer();
@@ -1070,6 +1086,7 @@ evaluarComparacion();
       comparacionLogica();
       pard();
       llavei();
+evaluarComparacion();
       label_6:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1106,6 +1123,7 @@ evaluarComparacion();
       }
       sino();
       llavei();
+evaluarComparacion();
       label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1140,10 +1158,12 @@ evaluarComparacion();
     jj_consume_token(FOR);
     pari();
     identificador();
+variable1=token.image;colVariable1=token.beginColumn;
     igual();
     numero();
     delimiter();
     identificador();
+{variable2=token.image;colVariable2=token.beginColumn;}
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MENOR:{
@@ -1193,6 +1213,7 @@ Token t;
         }
       case IDENTIFICADOR:{
         jj_consume_token(IDENTIFICADOR);
+guardarNombreV();esV = 1;
         break;
         }
       default:
@@ -1211,6 +1232,7 @@ Token t;
     }
     delimiter();
     identificador();
+variable3=token.image;colVariable3=token.beginColumn;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MAS:{
@@ -1239,6 +1261,7 @@ Token t;
     }
     pard();
     llavei();
+evaluarCicloFor();
     label_9:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1274,6 +1297,7 @@ Token t;
     comparacionLogica();
     pard();
     llavei();
+evaluarComparacion();
     label_10:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1586,7 +1610,7 @@ error();
 
     else{
 
-    String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ columnaV+ " no se ha asignado un valor a la variable";
+    String errorS = "Error Semantico en la linea " +token.beginLine + ", columna "+ columnaV+ " no se ha declarado la variable";
     errores.add(errorS);
 
     }
@@ -1599,6 +1623,42 @@ error();
             nombreV="";
 
             }
+          else{
+
+          int pos = nombreVariable.indexOf(nombreV);
+          String td = tipoDato.get(pos);
+          String t = "";
+          nombreV = "";
+
+          switch(td){
+
+            case "entero":
+                    valorAlmacenado.set(pos,"0");
+                    return;
+
+            case "flotante":
+                    valorAlmacenado.set(pos,"0");
+                    return;
+
+            case "cadena":
+                    t+= "\u005c"";
+                    t+= "-";
+                    t+= "\u005c"";
+                    valorAlmacenado.set(pos,t);
+                    return;
+
+            case "caracter":
+                    t+= "\u005c'";
+                    t+= "-";
+                    t+= "\u005c'";
+                    valorAlmacenado.set(pos,t);
+                    return;
+
+            case "bool":
+                    valorAlmacenado.set(pos,"verdadero");
+                    return;
+            }
+        }
   }
 
   static public void guardarColaOperacion() throws ParseException {colaOperacion.add(token.image);
@@ -2117,15 +2177,15 @@ error();
         }
 
                 int band = 0;
+                int posicion = nombreVariable.indexOf(nombreV);
                 switch(tipoD){
 
                 case "entero":
                         if(isNumeric(valorV)){
-                                nombreVariable.add(nombreV);
+
                                 nombreV="";
-                                tipoDato.add(tipoD);
                                 tipoD="";
-                                valorAlmacenado.add(valorV);
+                                valorAlmacenado.set(posicion,valorV);
                                 valorV="nulo";
                                 band=1;
                               }
@@ -2133,11 +2193,9 @@ error();
 
                 case "flotante":
                         if(isFloat(valorV)){
-                                nombreVariable.add(nombreV);
                                 nombreV="";
-                                tipoDato.add(tipoD);
                                 tipoD="";
-                                valorAlmacenado.add(valorV);
+                                valorAlmacenado.set(posicion,valorV);
                                 valorV="nulo";
                                 band=1;
                               }
@@ -2147,11 +2205,9 @@ error();
 
                     if(valorV.charAt(0)=='\u005c"'){
 
-                    nombreVariable.add(nombreV);
                     nombreV="";
-                    tipoDato.add(tipoD);
                     tipoD="";
-                    valorAlmacenado.add(valorV);
+                    valorAlmacenado.set(posicion,valorV);
                     valorV="nulo";
                     band=1;
 
@@ -2162,11 +2218,9 @@ error();
 
                     if(valorV.charAt(0)=='\u005c''){
 
-                    nombreVariable.add(nombreV);
                     nombreV="";
-                    tipoDato.add(tipoD);
                     tipoD="";
-                    valorAlmacenado.add(valorV);
+                    valorAlmacenado.set(posicion,valorV);
                     valorV="nulo";
                     band=1;
 
@@ -2177,11 +2231,9 @@ error();
 
                     if(valorV.equals("verdadero")||valorV.equals("falso")){
 
-                    nombreVariable.add(nombreV);
                     nombreV="";
-                    tipoDato.add(tipoD);
                     tipoD="";
-                    valorAlmacenado.add(valorV);
+                    valorAlmacenado.set(posicion,valorV);
                     valorV="nulo";
                     band=1;
 
@@ -2239,6 +2291,22 @@ error();
         else if(f2==0)f2=1;
 
         }
+
+        else if(s1.equals("verdadero")||s1.equals("falso")){
+
+            if(nf==1){
+            v1 = s1;
+            td1 = "bool";
+            nf = 2;
+            }
+
+            else{
+            v2 = s1;
+            td2 = "bool";
+            nf = 3;
+            }
+
+            }
 
         else if(isNumeric(s1)||isFloat(s1)){
 
@@ -2365,6 +2433,113 @@ error();
     posicionTokenComparacion.clear();
   }
 
+  static public void evaluarCicloFor() throws ParseException {//verificamos que la variable exista
+                if(busquedaV(variable1)){
+
+                    //VERIFICAMOS QUE SU TIPO DE DATO SEA ENTERO
+
+                    int pos = nombreVariable.indexOf(variable1);
+
+                    if(tipoDato.get(pos).equals("entero")){
+                            //Verificamos que la variable 2 sea la misma
+
+                                    if(variable1.equals(variable2)){
+
+                                        //verificamos si lo utilizado como limite del ciclo es una variable
+
+                                        if(esV == 1){
+                                                    esV=0;
+                                                    //buscamos que la variable exista
+                                                    if(busquedaV(nombreV)){
+
+                                                                //verificamos que su tipo de dato sea entero
+                                                                pos = nombreVariable.indexOf(nombreV);
+
+                                                                if(tipoDato.get(pos).equals("entero")){
+                                                                //AHORA VERIFICAMOS QUE ESTE INICIALIZADA
+
+                                                                        if(valorAlmacenado.get(pos).equals("nulo")){
+
+                                                                                //NO ESTA INICIALIZADA
+                                                                                String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + columnaV +
+                                                                                " variable no inicializada";
+                                                                                errores.add(errorS);
+                                                                                return;
+
+                                                                        }
+
+                                                                        //EN CASO DE QUE ESTE INICIALIZADA CONTINUAMOS
+
+                                                                }
+
+                                                                else{
+                                                                //NO ES ENTERO
+                                                                String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + columnaV +
+                                                                " el tipo de dato no es adecuado para el ciclo, se requiere entero";
+                                                                errores.add(errorS);
+                                                                return;
+                                                                }
+
+                                                    }
+
+                                                    else{   //NO EXISTE LA VARIABLE
+
+                                                            String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + columnaV +
+                                                            " la variable no ha sido definida";
+                                                            errores.add(errorS);
+                                                            return;
+
+                                                    }
+
+                                        }
+                                        //AQUI CONTINUAMOS AL FINALIZAR TODAS LAS CONDICIONES Y AHORA VERIFICAMOS QUE LA TERCERA VARIABLE SEA LA MISMA
+
+                                                if(!variable2.equals(variable3)){
+                                                    //EN CASO DE QUE SEAN DIFERENTES
+                                                    String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + colVariable3 +
+                                                    " variable diferente utilizada";
+                                                    errores.add(errorS);
+                                                    return;
+
+                                                }
+
+                                                else{
+                                                //TODAS LAS CONDICIONES CUMPLIDAS AL LLREGAR AQUI
+                                                   return;
+                                                }
+
+                                    }
+
+                                    else{ // NO ES LA MISMA
+                                          String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + colVariable2 +
+                                          " variable diferente utilizada";
+                                          errores.add(errorS);
+                                          return;
+                                    }
+
+                           }
+
+                     else{  //NO ES ENTERO
+
+                        String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + colVariable1 +
+                        " el tipo de dato no es adecuado para el ciclo, se requiere entero";
+                        errores.add(errorS);
+                        return;
+
+                     }
+
+
+                }
+
+
+                else{  //NO EXISTE LA VARIABLE                   
+                    String errorS = "Error Semantico en la linea " + token.beginLine + ", columna " + colVariable1 +
+                    " la variable no ha sido definida";
+                    errores.add(errorS);
+                    return;
+                }
+  }
+
   static private boolean jj_2_1(int xla)
  {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
@@ -2387,18 +2562,6 @@ error();
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
-  }
-
-  static private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13()
- {
-    if (jj_scan_token(IF)) return true;
-    return false;
   }
 
   static private boolean jj_3R_11()
@@ -2437,6 +2600,18 @@ error();
   static private boolean jj_3R_14()
  {
     if (jj_scan_token(LLAVEI)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13()
+ {
+    if (jj_scan_token(IF)) return true;
     return false;
   }
 
