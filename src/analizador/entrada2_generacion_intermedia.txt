@@ -1,0 +1,18 @@
+//Generación de código intermedia
+
+principal(){
+
+i=8;
+
+imprimir(i);
+
+i   =   + 8 9 
+
+hola=10;
+
+ciclo_for(i=0;i<hola;i++){
+
+
+	}
+
+}

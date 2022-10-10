@@ -1,7 +1,12 @@
 
 principal(){
 
-declarar entero i;
+declarar entero i = 8;
+
+imprimir(i);
+
+asignacion_a i = 8 + 9;
+
 declarar entero hola = 10;
 
 ciclo_for(i=0;i<hola;i++){

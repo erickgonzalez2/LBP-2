@@ -54,6 +54,7 @@ class Gramatica{
     static int colVariable1;
     static int colVariable2;
     static int colVariable3;
+    static String cod = "";
 
     static int esV = 0;
 
@@ -64,6 +65,7 @@ class Gramatica{
     System.out.println("Ingresa el nombre del archivo que quieres analizar");
     Scanner entrada = new Scanner (System.in);
     String str = entrada.next();
+    cod = str;
     
     str+= ".txt";
     FileReader file = new FileReader(str);
@@ -99,9 +101,11 @@ class Gramatica{
 
     //GENERAMOS CÓDIGO INTERMEDIO
 
-    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str);
+    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str,cod);
 
-    System.out.println(generadorIntermedio.getEntrada());
+    generadorIntermedio.generar();
+
+    
     }
 
     else{

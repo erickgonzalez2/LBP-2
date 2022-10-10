@@ -44,6 +44,7 @@ class Gramatica implements GramaticaConstants {
     static int colVariable1;
     static int colVariable2;
     static int colVariable3;
+    static String cod = "";
 
     static int esV = 0;
 
@@ -54,6 +55,7 @@ class Gramatica implements GramaticaConstants {
     System.out.println("Ingresa el nombre del archivo que quieres analizar");
     Scanner entrada = new Scanner (System.in);
     String str = entrada.next();
+    cod = str;
 
     str+= ".txt";
     FileReader file = new FileReader(str);
@@ -89,9 +91,11 @@ class Gramatica implements GramaticaConstants {
 
     //GENERAMOS CÓDIGO INTERMEDIO
 
-    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str);
+    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str,cod);
 
-    System.out.println(generadorIntermedio.getEntrada());
+    generadorIntermedio.generar();
+
+
     }
 
     else{
@@ -2564,6 +2568,30 @@ error();
     finally { jj_save(2, xla); }
   }
 
+  static private boolean jj_3R_15()
+ {
+    if (jj_scan_token(PARI)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14()
+ {
+    if (jj_scan_token(LLAVEI)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13()
+ {
+    if (jj_scan_token(IF)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_11()
  {
     if (jj_scan_token(FOR)) return true;
@@ -2588,30 +2616,6 @@ error();
  {
     if (jj_3R_12()) return true;
     if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_15()
- {
-    if (jj_scan_token(PARI)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14()
- {
-    if (jj_scan_token(LLAVEI)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13()
- {
-    if (jj_scan_token(IF)) return true;
     return false;
   }
 
