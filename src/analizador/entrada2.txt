@@ -5,7 +5,7 @@ declarar entero i = 8;
 
 imprimir(i);
 
-asignacion_a i = 8 + 9;
+asignacion_a i = 8 + 9 / 5;
 
 declarar entero hola = 10;
 
@@ -14,4 +14,18 @@ ciclo_for(i=0;i<hola;i++){
 
 	}
 
+ciclo_for(i=0;i<hola;i++){
+
+
+	}
+
+
+ciclo_mientras(i<hola){
+
+
+
 }
+
+}
+
+

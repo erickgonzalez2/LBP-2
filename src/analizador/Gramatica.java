@@ -11,6 +11,8 @@ class Gramatica implements GramaticaConstants {
     static ArrayList<String> tipoDato = new ArrayList<String>();
     static ArrayList<String> valorAlmacenado = new ArrayList<String>();
 
+    static ArrayList<Integer> finCiclo = new ArrayList<Integer>();
+
     static ArrayList<String> errores = new ArrayList<String>();
 
     static ArrayList<String> colaOperacion = new ArrayList<String>();
@@ -91,7 +93,9 @@ class Gramatica implements GramaticaConstants {
 
     //GENERAMOS CÓDIGO INTERMEDIO
 
-    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str,cod);
+    GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str,cod,finCiclo);
+
+
 
     generadorIntermedio.generar();
 
@@ -1292,6 +1296,7 @@ evaluarCicloFor();
       sentencia();
     }
     llaved();
+finCiclo.add(Integer.valueOf(token.beginLine));
   }
 
 //----------------------------------------ESTRUCTURA CICLO WHILE -------------------------------------------------------
@@ -1328,6 +1333,7 @@ evaluarComparacion();
       sentencia();
     }
     llaved();
+finCiclo.add(Integer.valueOf(token.beginLine));
   }
 
 //----------------------------------------LEER DATOS DESDE TECLADO -------------------------------------------------------
@@ -2568,24 +2574,6 @@ error();
     finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_3R_15()
- {
-    if (jj_scan_token(PARI)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14()
- {
-    if (jj_scan_token(LLAVEI)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_13()
  {
     if (jj_scan_token(IF)) return true;
@@ -2616,6 +2604,24 @@ error();
  {
     if (jj_3R_12()) return true;
     if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_15()
+ {
+    if (jj_scan_token(PARI)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14()
+ {
+    if (jj_scan_token(LLAVEI)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
     return false;
   }
 

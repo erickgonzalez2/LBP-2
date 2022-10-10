@@ -12,6 +12,8 @@ public class GeneradorIntermedio {
 
     private String entrada;
     private String salida;
+    private int n_etiquetas = 0; 
+    private ArrayList <Integer> finCiclo;
 
     public String getEntrada() {
         return entrada;
@@ -24,9 +26,10 @@ public class GeneradorIntermedio {
     public GeneradorIntermedio() {
     }
 
-    public GeneradorIntermedio(String entrada,String salida) {
+    public GeneradorIntermedio(String entrada,String salida,ArrayList<Integer>finCiclo) {
         this.entrada = entrada;
         this.salida = salida;
+        this.finCiclo = finCiclo;
     }
 
     public void generar() {
@@ -42,18 +45,48 @@ public class GeneradorIntermedio {
 
             String bfread;
             String temp = "";
+            String condicionCiclo = "";
+            String pasoCiclo = "";
+            String inicioCiclo = "";
 
             FileWriter filewriter = new FileWriter(nombre);
             BufferedWriter bufferwriter = new BufferedWriter(filewriter);
             PrintWriter printwriter = new PrintWriter(bufferwriter);
 
             printwriter.write("//Generación de código intermedia\n");
+            
+            int nlines = 0;
+            boolean llaveCiclo = false;
 
             while ((bfread = buffer.readLine()) != null) {
+                
+                nlines++;
+                
+                if(!finCiclo.isEmpty()){
+                    
+                    if(finCiclo.contains(nlines)){
+                        
+                        
+                        printwriter.write(pasoCiclo+"\n");
+                        pasoCiclo="";
+                        
+                        
+                        printwriter.write(condicionCiclo+" ? ");
+                        printwriter.write(" goto "+"L"+(n_etiquetas-1)+": goto L" +n_etiquetas+"\n\n");
+                        printwriter.write("L"+n_etiquetas);
+                        
+                        condicionCiclo = "";
+                        llaveCiclo = true;
+                    }
+                    
+                }
+                
 
                 for (int i = 0; i < bfread.length(); i++) {
+                    
+                    
 
-                    if (bfread.charAt(i) != ' ') {
+                    if (bfread.charAt(i) != ' ' && !llaveCiclo) {
                         temp += bfread.charAt(i);
                     }
 
@@ -61,12 +94,16 @@ public class GeneradorIntermedio {
 
                         //ANALIZAREMOS QUE TIPO DE INSTRUCCION ES
                         //DECLARACION DE VARIABLES
-                        if (temp.equals("declarar")) {
+                        if (temp.equals("declarar") ||temp.equals("asignacion") ) {
                             printwriter.write("");
-                        } else if (temp.equals("entero") || temp.equals("flotante") || temp.equals("cadena") || temp.equals("caracter")
+                        } 
+                        
+                        else if (temp.equals("entero") || temp.equals("flotante") || temp.equals("cadena") || temp.equals("caracter")
                                 || temp.equals("bool")) {
                             printwriter.write("");
-                        } //REALIZACION DE NOTACION POLACA
+                        }
+                        
+                        //REALIZACION DE NOTACION POLACA
                         else if (temp.equals("declarar_a") || temp.equals("asignacion_a")) {
                             
                             String notacion = notacionPolaca(bfread.substring(i, bfread.length() - 1));
@@ -78,17 +115,80 @@ public class GeneradorIntermedio {
                             }
                             temp="";
                             break;
-                        } else {
+                        } 
+                        
+                        else if(temp.contains("ciclo_for")){
+                            
+                            
+                            int band = -1;
+                            
+                            for(int j = 0;j<temp.length();j++){
+                                
+                                if(band==0)inicioCiclo+=temp.charAt(j);
+                                
+                                else if(band==1&& temp.charAt(j)!=';')condicionCiclo+=temp.charAt(j);
+                                
+                                else if(band==2 && temp.charAt(j)!=')' && temp.charAt(j)!='{')pasoCiclo+=temp.charAt(j);
+                                
+                                if(temp.charAt(j)==';')band++;
+                                
+                                if(temp.charAt(j)=='(')band++;
+                        
+                                
+                            }
+                            printwriter.write(inicioCiclo+"\n\n");
+                            inicioCiclo="";
+                            n_etiquetas++;
+                            printwriter.write("L"+n_etiquetas+":");
+                            n_etiquetas++;
+                            pasoCiclo+=";";
+                            temp="";
+                            break;
+                        }
+                        
+                        else if(temp.contains("ciclo_mientras")){
+                            
+                            
+                            int band = -1;
+                            
+                            for(int j = 0;j<temp.length();j++){                                                                                                                               
+                                
+                                if(band==0 && temp.charAt(j)!=')' && temp.charAt(j)!='{')condicionCiclo+=temp.charAt(j);
+                                                                                                
+                                if(temp.charAt(j)=='(')band++;                        
+                                
+                            }
+                            
+                            printwriter.write("\n");                            
+                            n_etiquetas++;
+                            printwriter.write("L"+n_etiquetas+":");
+                            n_etiquetas++;                            
+                            temp="";
+                            break;
+                            
+                            
+                            
+                            
+                        }
+                        
+                        
+                        else if(temp.contains("si")){
+                            
+                        }
+                        
+                        else {
                             printwriter.write(temp);
+                               temp = "";
                         }
                         temp = "";
 
                     }
-
+                        
                 }
 
                 printwriter.write("\n");
-
+                if(llaveCiclo)llaveCiclo=false;
+                        
             }
             printwriter.close();
             bufferwriter.close();
