@@ -1,31 +1,19 @@
 
-principal(){
+ principal(){
 
-declarar entero i = 8;
+ declarar entero a;
+ declarar entero b;
+ declarar entero suma;
 
-imprimir(i);
+ leer(a);
+ leer(b);
 
-asignacion_a i = 8 + 9 / 5;
+ asignacion_a suma  = a*b;
 
-declarar entero hola = 10;
-
-ciclo_for(i=0;i<hola;i++){
-
-
-	}
-
-ciclo_for(i=0;i<hola;i++){
-
-
-	}
-
-
-ciclo_mientras(i<hola){
+ imprimir(suma);
+ imprimir("\n");
 
 
 
-}
-
-}
-
-
+ 
+ }

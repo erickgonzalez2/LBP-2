@@ -2,45 +2,19 @@
 
 principal(){
 
-i=8;
+a;
+b;
+suma;
 
-imprimir(i);
+leer(a);
+leer(b);
 
-i   =   + 8 / 9 5 
+suma = * ab
 
-hola=10;
-
-i=0;
-
-L1
-
-
-i++;
-i<hola ?  goto L1: goto L2
-
-L2
-
-i=0;
-
-L3
-
-
-i++;
-i<hola ?  goto L3: goto L4
-
-L4
+ imprimir(suma);
+ imprimir("\n");
 
 
 
-L5:
-
-
-
-
-i<hola ?  goto L5: goto L6
-
-L6
 
 }
-
-

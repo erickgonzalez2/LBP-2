@@ -1,5 +1,5 @@
 options{
-    
+t    
     LOOKAHEAD=1;
    
 }
@@ -12,7 +12,8 @@ PARSER_BEGIN(Gramatica)
 
 import java.util.*;
 import java.io.*;
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 
 class Gramatica{
@@ -70,6 +71,17 @@ class Gramatica{
     cod = str;
     
     str+= ".txt";
+
+    File fichero1 = new File(cod+".exe");
+    File fichero2 = new File(cod+"Objeto.txt");
+    File fichero3 = new File(cod+"_generacion_intermedia.txt");
+
+    if(fichero1.delete())System.out.println("Archivo reescrito");
+
+    if(fichero2.delete())System.out.println("Archivo reescrito");
+
+    if(fichero3.delete())System.out.println("Archivo reescrito");
+
     FileReader file = new FileReader(str);
     BufferedReader buffer = new BufferedReader (file);
     Gramatica analizador = new Gramatica (buffer);
@@ -99,17 +111,31 @@ class Gramatica{
     
     if(errores.isEmpty()){
 
-    System.out.println("Ejecucion finalizada sin errores");   
+    System.out.println("Ejecuci\u00f3n finalizada sin errores");   
 
     //GENERAMOS CÓDIGO INTERMEDIO
 
     GeneradorIntermedio generadorIntermedio = new GeneradorIntermedio(str,cod,finCiclo);
-
    
-
     generadorIntermedio.generar();
 
+    //GENERAMOS CÓDIGO OBJETO
+
+    GeneradorObjeto assembler = new GeneradorObjeto(str,cod);
     
+    assembler.compilar();
+
+    assembler.objeto();
+
+
+      try {
+            Thread.sleep(4000);        
+            System.out.println("Archivo listo para ejecuci\u00f3n"); 
+        }  catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(Gramatica.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+
     }
 
     else{
@@ -369,15 +395,14 @@ TOKEN :
         imprimir()
         |errorLexico()
         |declaraciones()
-        |asignaciones()   //Asignacion IDENTIFICADOR = (VALOR | IDENFITICADOR) DELIMITER
-        |incrementoDecremento()
+        |asignaciones()   
         | condicionalIf()
-        | LOOKAHEAD(2)cicloFor()
-        | (<BREAK>delimiter())
+        | LOOKAHEAD(2)cicloFor()      
         | cicloWhile()
         | leer()
         | declaracionAritmetica()
-        |asignacionAritmetica()        
+        |asignacionAritmetica()
+        |errorSintactico()
 
     }
 
@@ -391,7 +416,7 @@ TOKEN :
 
          try{
 
-        <IDENTIFICADOR>{guardarNombreV();}|<NUMERO>|<DECIMAL>|<TRUE>|<FALSE>|<NULL>|<CADENA>|<CHAR>}
+        <IDENTIFICADOR>{guardarNombreV();errorSemanticoImprimir();}|<NUMERO>|<DECIMAL>|<TRUE>|<FALSE>|<NULL>|<CADENA>|<CHAR>}
 
         catch (ParseException e) {        
         Token t;
@@ -407,7 +432,7 @@ TOKEN :
 
         )
 
-       pard() delimiter(){errorSemanticoImprimir();}
+       pard() delimiter()
 
 }
 
@@ -1019,10 +1044,26 @@ void si():
    
     }
 
+    void errorSintactico():
+    {}
+    {
+       <IDENTIFICADOR>{errorSti();}
+}
+
 
 //--------------------------------------------------------------------------------------------------------------------------------
     
    
+    JAVACODE
+
+    public void errorSti(){
+
+    String errorS = "Error sint\u00e1ctico"+token.image+"en la l\u00ednea "+ token.beginLine + ", columna "+token.beginColumn+ " se esperaba <PALABRA RESERVADA>";
+    errores.add(errorS);
+    errorS = "";
+
+
+    }
 
    
 
@@ -1879,7 +1920,7 @@ public void evaluarComparacion(){
 
             } 
 
-        else if(isNumeric(s1)||isFloat(s1)){
+        else if(isNumeric(s1)){
         
             if(nf==1){
             v1 = s1;
@@ -1890,6 +1931,21 @@ public void evaluarComparacion(){
             else{
             v2 = s1;
             td2 = "entero";
+            nf = 3;
+            }       
+        }
+
+        else if(isFloat(s1)){
+        
+            if(nf==1){
+            v1 = s1;
+            td1 = "flotante";
+            nf = 2;
+            }
+
+            else{
+            v2 = s1;
+            td2 = "flotante";
             nf = 3;
             }       
         }
@@ -2018,6 +2074,7 @@ JAVACODE
                     //VERIFICAMOS QUE SU TIPO DE DATO SEA ENTERO
 
                     int pos = nombreVariable.indexOf(variable1);
+                    valorAlmacenado.set(pos,"0");
                     
                     if(tipoDato.get(pos).equals("entero")){
                             //Verificamos que la variable 2 sea la misma

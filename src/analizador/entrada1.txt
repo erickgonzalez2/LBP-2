@@ -1,13 +1,5 @@
 principal(){
 
- entero a = 6 + 8;
-entero v = 8-7;
-cadena accc = "hola q ase"$;
-flotante s = 4.3, k = 9.3;
-a = 5;
-s += ll;
-flotante por = 4/3;
-cadena a = 33*6+5+4;
-a += 4+4;
+op;
 }    
 

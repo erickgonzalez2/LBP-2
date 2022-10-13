@@ -1,1 +1,14 @@
-Hola "amigo"  () {} ___
+
+principal(){
+
+declarar entero numero;
+
+leer(numero);
+
+ciclo_mientras(numero>=0){
+
+leer(numero);
+
+}
+
+}

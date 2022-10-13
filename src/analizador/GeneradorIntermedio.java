@@ -98,6 +98,12 @@ public class GeneradorIntermedio {
                             printwriter.write("");
                         } 
                         
+                        else if(temp.contains("imprimir")){
+                            temp="";
+                            printwriter.write(bfread);
+                            break;
+                        }
+                        
                         else if (temp.equals("entero") || temp.equals("flotante") || temp.equals("cadena") || temp.equals("caracter")
                                 || temp.equals("bool")) {
                             printwriter.write("");
@@ -105,13 +111,14 @@ public class GeneradorIntermedio {
                         
                         //REALIZACION DE NOTACION POLACA
                         else if (temp.equals("declarar_a") || temp.equals("asignacion_a")) {
+                                                        
                             
                             String notacion = notacionPolaca(bfread.substring(i, bfread.length() - 1));
                             
                             for(int j = 0;j<notacion.length();j++){
                                 
                                 printwriter.write(notacion.charAt(j));
-                                printwriter.write(" ");
+                        
                             }
                             temp="";
                             break;
@@ -172,9 +179,7 @@ public class GeneradorIntermedio {
                         }
                         
                         
-                        else if(temp.contains("si")){
-                            
-                        }
+                        
                         
                         else {
                             printwriter.write(temp);
@@ -217,7 +222,7 @@ public class GeneradorIntermedio {
 
         for (int i = 0; i < linea.length(); i++) {
 
-            if (leer && linea.charAt(i) != ' '&&linea.charAt(i)!=';') {
+            if (leer && linea.charAt(i)!=';') {
                 infija += linea.charAt(i);
             }
 
@@ -301,6 +306,7 @@ public class GeneradorIntermedio {
       if (isalpha(infix.charAt(i)) || isdigit(infix.charAt(i)))
         output += infix.charAt(i);
         
+      else if(infix.charAt(i)==' ')output+=infix.charAt(i);
  
       // If the scanned character is an
       // ‘(‘, push it to the stack.
