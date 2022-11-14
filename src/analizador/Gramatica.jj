@@ -1,5 +1,5 @@
 options{
-t    
+    
     LOOKAHEAD=1;
    
 }
@@ -75,12 +75,15 @@ class Gramatica{
     File fichero1 = new File(cod+".exe");
     File fichero2 = new File(cod+"Objeto.txt");
     File fichero3 = new File(cod+"_generacion_intermedia.txt");
+    File fichero4 = new File(cod+".cpp");
 
-    if(fichero1.delete())System.out.println("Archivo reescrito");
+    if(fichero1.delete())System.out.println("");
 
-    if(fichero2.delete())System.out.println("Archivo reescrito");
+    if(fichero2.delete())System.out.println("");
 
-    if(fichero3.delete())System.out.println("Archivo reescrito");
+    if(fichero3.delete())System.out.println("");
+
+    if(fichero4.delete())System.out.println("");
 
     FileReader file = new FileReader(str);
     BufferedReader buffer = new BufferedReader (file);
@@ -131,6 +134,8 @@ class Gramatica{
       try {
             Thread.sleep(4000);        
             System.out.println("Archivo listo para ejecuci\u00f3n"); 
+            File fichero4 = new File(cod+".cpp");
+            if(fichero4.delete())System.out.println("");
         }  catch (InterruptedException ex) {
             java.util.logging.Logger.getLogger(Gramatica.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -372,7 +377,7 @@ TOKEN :
     void Programa() :{}
     {
         
-            <MAIN><PARI><PARD><LLAVEI> Bloque() <LLAVED> <EOF>
+                <MAIN><PARI><PARD><LLAVEI> Bloque() <LLAVED> <EOF>
         
     }
     
@@ -1058,7 +1063,7 @@ void si():
 
     public void errorSti(){
 
-    String errorS = "Error sint\u00e1ctico"+token.image+"en la l\u00ednea "+ token.beginLine + ", columna "+token.beginColumn+ " se esperaba <PALABRA RESERVADA>";
+    String errorS = "Error sint\u00e1ctico '"+token.image+"' en la l\u00ednea "+ token.beginLine + ", columna "+token.beginColumn+ " se esperaba una <PALABRA RESERVADA>";
     errores.add(errorS);
     errorS = "";
 
@@ -1206,17 +1211,17 @@ void si():
 
           int pos = nombreVariable.indexOf(nombreV);
           String td = tipoDato.get(pos);
-          String t = "";
+          String t = "abc";
           nombreV = "";
 
           switch(td){
                       
             case "entero":
-                    valorAlmacenado.set(pos,"0");
+                    valorAlmacenado.set(pos,"100");
                     return;
                     
             case "flotante":
-                    valorAlmacenado.set(pos,"0");
+                    valorAlmacenado.set(pos,"100");
                     return;
             
             case "cadena":
@@ -2028,9 +2033,7 @@ public void evaluarComparacion(){
                     
                     if(f1 != 1 && f2 != 1){
                     
-                        if(!td1.equals("entero") && !td2.equals("flotante") || 
-                           !td1.equals("flotante") && !td1.equals("entero")||
-                           !td1.equals(td2)){
+                        if(!td1.equals(td2)){
 
                               //TIPOS DE DATOS DISTINTOS
                               

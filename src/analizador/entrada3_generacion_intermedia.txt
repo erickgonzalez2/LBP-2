@@ -1,0 +1,38 @@
+//Generación de código intermedia
+
+principal(){
+
+cp;
+p;
+cf;
+enteroacum =  0
+i;
+
+imprimir("Digite el numero de parciales");
+
+leer(p);
+
+i=0;
+
+L1:
+
+imprimir("Digite la calificacion");
+
+leer(cp);
+
+acum = + acumcp
+
+
+i++;
+i<=p ?  goto L1: goto L2
+
+L2
+
+cf = / pacum
+
+imprimir("El promedio es ");
+
+imprimir(cf);
+
+
+}

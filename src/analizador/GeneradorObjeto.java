@@ -22,14 +22,33 @@ public class GeneradorObjeto {
     
     private String entrada;
     private String salida;
+    private String codigoObjeto;
 
     public GeneradorObjeto(String entrada, String salida) {
         this.entrada = entrada;
         this.salida = salida;
     }
     
-    public void compilar(){
+    
+    public void ascii(){
         
+        
+        
+        String str = entrada;
+        
+        for(int i=0;i<str.length();i++){
+            
+           
+            
+        }
+        
+        
+        
+        
+    }
+    
+    public void compilar(){
+                      
         FileReader file = null;
         
         try{
@@ -48,13 +67,18 @@ public class GeneradorObjeto {
         
         
          printwriter.write("#include <iostream>\n\n"
+                 + "#include <wchar.h>\n\n"
+                 + "#include <locale.h>\n\n"
                  + "using namespace std;\n\n");
          
          while((bfread = buffer.readLine())!=null){
           
          bfread+=" ";    
              
-         if(bfread.contains("principal"))printwriter.write("int main(){\n\n");
+         if(bfread.contains("principal")){
+             printwriter.write("int main()\n\n");
+             if(bfread.contains("{"))printwriter.write("{");
+         }
          
          
          else if(bfread.contains("declarar")||bfread.contains("asignacion")||bfread.contains("declarar_a")
@@ -65,7 +89,7 @@ public class GeneradorObjeto {
                  if(bfread.charAt(i)!=' '){
                         temp+=bfread.charAt(i);
                   }
-                                  
+                                                                
                  
                  else{                                          
                      
@@ -177,29 +201,28 @@ public class GeneradorObjeto {
              boolean leer = false;
              
              for(int i = 0;i<bfread.length();i++){
-                 
-                 if(bfread.charAt(i)=='('){
+                      
+                 if(!Character.isAlphabetic(bfread.charAt(i)) && !leer){
                      
-                     if(temp.equals("si"))printwriter.write("if");                                          
+                     if(temp.contains("sino si"))printwriter.write("else if");
                      
-                     if(temp.equals("sino si"))printwriter.write("else if");
+                     else if(temp.contains("sino"))printwriter.write("else");
                      
-                     temp="";                     
+                     else if(temp.contains("si"))printwriter.write("if");
                      
+                     temp="";
+                     leer =true;
                  }
                  
-                 else if(bfread.charAt(i)=='{'){
-                     
-                     if(temp.equals("sino")){
-                         printwriter.write("else");
-                         temp="";
-                     }
-                     
-                 }
                  
-                 if(!leer && bfread.charAt(i)!=' ' ){
+                 if(!leer){
                      temp+=bfread.charAt(i);
                  }
+                 
+                 if(leer){
+                     temp+=bfread.charAt(i);
+                 }
+                 
                  
                  
              }
@@ -207,11 +230,15 @@ public class GeneradorObjeto {
              temp="";
          }
          
-        
+         else if(bfread.contains("{")){
+             printwriter.write(bfread);
+         }         
          
          else if(bfread.contains("}")){
              printwriter.write(bfread);
          }
+         
+         
                      
              
              

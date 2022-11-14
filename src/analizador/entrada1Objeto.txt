@@ -1,4 +1,4 @@
-	.file	"entrada2.cpp"
+	.file	"entrada1.cpp"
 	.section .rdata,"dr"
 __ZStL19piecewise_construct:
 	.space 1
@@ -6,21 +6,15 @@ __ZStL19piecewise_construct:
 	.def	___main;	.scl	2;	.type	32;	.endef
 	.align 4
 LC0:
-	.ascii "Programa que realiza el promedio de 3 numeros y te dice si estas aprobado\12\12\0"
+	.ascii "Programa para las tablas de multiplicar de un numero\12\12\0"
 LC1:
-	.ascii "Ingresa el primer numero\12\12\0"
+	.ascii "Ingresa un numero\12\12\0"
 LC2:
-	.ascii "Ingresa el segundo numero\12\12\0"
+	.ascii " x \0"
 LC3:
-	.ascii "Ingresa el tercer numero\12\12\0"
-LC5:
-	.ascii "El promedio es: \0"
-LC6:
+	.ascii " = \0"
+LC4:
 	.ascii "\12\0"
-LC8:
-	.ascii "Estas aprobado\12\0"
-LC9:
-	.ascii "Estas reprobado\12\0"
 	.text
 	.globl	_main
 	.def	_main;	.scl	2;	.type	32;	.endef
@@ -36,7 +30,7 @@ LFB1445:
 	movl	%esp, %ebp
 	pushl	%ecx
 	.cfi_escape 0xf,0x3,0x75,0x7c,0x6
-	subl	$52, %esp
+	subl	$36, %esp
 	call	___main
 	movl	$LC0, 4(%esp)
 	movl	$__ZSt4cout, (%esp)
@@ -47,61 +41,42 @@ LFB1445:
 	leal	-20(%ebp), %eax
 	movl	%eax, (%esp)
 	movl	$__ZSt3cin, %ecx
-	call	__ZNSirsERf
+	call	__ZNSirsERi
+	subl	$4, %esp
+	movl	$1, -12(%ebp)
+L3:
+	cmpl	$10, -12(%ebp)
+	jg	L2
+	movl	-20(%ebp), %eax
+	imull	-12(%ebp), %eax
+	movl	%eax, -16(%ebp)
+	movl	-20(%ebp), %eax
+	movl	%eax, (%esp)
+	movl	$__ZSt4cout, %ecx
+	call	__ZNSolsEi
 	subl	$4, %esp
 	movl	$LC2, 4(%esp)
 	movl	$__ZSt4cout, (%esp)
 	call	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
-	leal	-24(%ebp), %eax
+	movl	-12(%ebp), %eax
 	movl	%eax, (%esp)
-	movl	$__ZSt3cin, %ecx
-	call	__ZNSirsERf
+	movl	$__ZSt4cout, %ecx
+	call	__ZNSolsEi
 	subl	$4, %esp
 	movl	$LC3, 4(%esp)
 	movl	$__ZSt4cout, (%esp)
 	call	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
-	leal	-28(%ebp), %eax
+	movl	-16(%ebp), %eax
 	movl	%eax, (%esp)
-	movl	$__ZSt3cin, %ecx
-	call	__ZNSirsERf
-	subl	$4, %esp
-	flds	-20(%ebp)
-	flds	-24(%ebp)
-	faddp	%st, %st(1)
-	flds	-28(%ebp)
-	faddp	%st, %st(1)
-	fstps	-12(%ebp)
-	flds	-12(%ebp)
-	flds	LC4
-	fdivrp	%st, %st(1)
-	fstps	-16(%ebp)
-	movl	$LC5, 4(%esp)
-	movl	$__ZSt4cout, (%esp)
-	call	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
-	flds	-16(%ebp)
-	fstps	(%esp)
 	movl	$__ZSt4cout, %ecx
-	call	__ZNSolsEf
+	call	__ZNSolsEi
 	subl	$4, %esp
-	movl	$LC6, 4(%esp)
+	movl	$LC4, 4(%esp)
 	movl	$__ZSt4cout, (%esp)
 	call	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
-	flds	-16(%ebp)
-	flds	LC7
-	fxch	%st(1)
-	fucompp
-	fnstsw	%ax
-	sahf
-	jbe	L7
-	movl	$LC8, 4(%esp)
-	movl	$__ZSt4cout, (%esp)
-	call	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
-	jmp	L4
-L7:
-	movl	$LC9, 4(%esp)
-	movl	$__ZSt4cout, (%esp)
-	call	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
-L4:
+	addl	$1, -12(%ebp)
+	jmp	L3
+L2:
 	movl	$0, %eax
 	movl	-4(%ebp), %ecx
 	.cfi_def_cfa 1, 0
@@ -114,7 +89,7 @@ L4:
 LFE1445:
 	.def	___tcf_0;	.scl	3;	.type	32;	.endef
 ___tcf_0:
-LFB1875:
+LFB1873:
 	.cfi_startproc
 	pushl	%ebp
 	.cfi_def_cfa_offset 8
@@ -129,10 +104,10 @@ LFB1875:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-LFE1875:
+LFE1873:
 	.def	__Z41__static_initialization_and_destruction_0ii;	.scl	3;	.type	32;	.endef
 __Z41__static_initialization_and_destruction_0ii:
-LFB1874:
+LFB1872:
 	.cfi_startproc
 	pushl	%ebp
 	.cfi_def_cfa_offset 8
@@ -141,24 +116,24 @@ LFB1874:
 	.cfi_def_cfa_register 5
 	subl	$24, %esp
 	cmpl	$1, 8(%ebp)
-	jne	L11
+	jne	L8
 	cmpl	$65535, 12(%ebp)
-	jne	L11
+	jne	L8
 	movl	$__ZStL8__ioinit, %ecx
 	call	__ZNSt8ios_base4InitC1Ev
 	movl	$___tcf_0, (%esp)
 	call	_atexit
-L11:
+L8:
 	nop
 	leave
 	.cfi_restore 5
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-LFE1874:
+LFE1872:
 	.def	__GLOBAL__sub_I_main;	.scl	3;	.type	32;	.endef
 __GLOBAL__sub_I_main:
-LFB1876:
+LFB1874:
 	.cfi_startproc
 	pushl	%ebp
 	.cfi_def_cfa_offset 8
@@ -174,21 +149,14 @@ LFB1876:
 	.cfi_def_cfa 4, 4
 	ret
 	.cfi_endproc
-LFE1876:
+LFE1874:
 	.section	.ctors,"w"
 	.align 4
 	.long	__GLOBAL__sub_I_main
-	.section .rdata,"dr"
-	.align 4
-LC4:
-	.long	1077936128
-	.align 4
-LC7:
-	.long	1086324736
 	.ident	"GCC: (MinGW.org GCC-6.3.0-1) 6.3.0"
 	.def	__ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc;	.scl	2;	.type	32;	.endef
-	.def	__ZNSirsERf;	.scl	2;	.type	32;	.endef
-	.def	__ZNSolsEf;	.scl	2;	.type	32;	.endef
+	.def	__ZNSirsERi;	.scl	2;	.type	32;	.endef
+	.def	__ZNSolsEi;	.scl	2;	.type	32;	.endef
 	.def	__ZNSt8ios_base4InitD1Ev;	.scl	2;	.type	32;	.endef
 	.def	__ZNSt8ios_base4InitC1Ev;	.scl	2;	.type	32;	.endef
 	.def	_atexit;	.scl	2;	.type	32;	.endef

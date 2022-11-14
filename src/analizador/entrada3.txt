@@ -1,14 +1,32 @@
 
 principal(){
 
-declarar entero numero;
+declarar entero cp;
+declarar entero p;
+declarar entero cf;
+declarar_a entero acum = 0;
+declarar entero i;
 
-leer(numero);
+imprimir("Digite el numero de parciales");
 
-ciclo_mientras(numero>=0){
+leer(p);
 
-leer(numero);
+ciclo_for(i=0;i<=p;i++){
+
+imprimir("Digite la calificacion");
+
+leer(cp);
+
+asignacion_a acum = acum+cp;
+
 
 }
+
+asignacion_a cf= p/acum;
+
+imprimir("El promedio es ");
+
+imprimir(cf);
+
 
 }

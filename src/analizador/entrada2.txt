@@ -1,19 +1,50 @@
-
- principal(){
-
- declarar entero a;
- declarar entero b;
- declarar entero suma;
-
- leer(a);
- leer(b);
-
- asignacion_a suma  = a*b;
-
- imprimir(suma);
- imprimir("\n");
+principal()
+{
 
 
+imprimir("Programa que realiza el promedio de 3 numeros y te dice si estas aprobado\n\n");
 
- 
- }
+
+declarar flotante num1;
+declarar flotante num2;
+declarar flotante num3;
+declarar flotante suma;
+declarar flotante promedio;
+
+
+imprimir("Ingresa el primer numero\n\n");
+leer(num1);
+
+imprimir("Ingresa el segundo numero\n\n");
+leer(num2);
+
+
+imprimir("Ingresa el tercer numero\n\n");
+leer(num3);
+
+asignacion_a suma = num1+num2+num3;
+
+asignacion_a promedio = suma/3;
+
+imprimir("El promedio es: ");
+imprimir(promedio);
+imprimir("\n");
+
+si(promedio>6.0)
+{
+
+imprimir("Estas aprobado\n");
+
+}
+
+sino
+{
+
+imprimir("Estas reprobado\n");
+
+}
+
+
+
+
+}

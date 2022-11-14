@@ -1558,7 +1558,7 @@ error();
 errorSti();
   }
 
-  static public void errorSti() throws ParseException {String errorS = "Error sint\u00e1ctico"+token.image+"en la l\u00ednea "+ token.beginLine + ", columna "+token.beginColumn+ " se esperaba <PALABRA RESERVADA>";
+  static public void errorSti() throws ParseException {String errorS = "Error sint\u00e1ctico '"+token.image+"' en la l\u00ednea "+ token.beginLine + ", columna "+token.beginColumn+ " se esperaba una <PALABRA RESERVADA>";
     errores.add(errorS);
     errorS = "";
   }
@@ -1654,17 +1654,17 @@ errorSti();
 
           int pos = nombreVariable.indexOf(nombreV);
           String td = tipoDato.get(pos);
-          String t = "";
+          String t = "abc";
           nombreV = "";
 
           switch(td){
 
             case "entero":
-                    valorAlmacenado.set(pos,"0");
+                    valorAlmacenado.set(pos,"100");
                     return;
 
             case "flotante":
-                    valorAlmacenado.set(pos,"0");
+                    valorAlmacenado.set(pos,"100");
                     return;
 
             case "cadena":
@@ -2443,9 +2443,7 @@ errorSti();
 
                     if(f1 != 1 && f2 != 1){
 
-                        if(!td1.equals("entero") && !td2.equals("flotante") ||
-                           !td1.equals("flotante") && !td1.equals("entero")||
-                           !td1.equals(td2)){
+                        if(!td1.equals(td2)){
 
                               //TIPOS DE DATOS DISTINTOS
 

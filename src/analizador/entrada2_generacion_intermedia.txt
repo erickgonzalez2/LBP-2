@@ -1,18 +1,48 @@
 //Generación de código intermedia
+principal()
+{
 
-principal(){
 
-a;
-b;
+imprimir("Programa que realiza el promedio de 3 numeros y te dice si estas aprobado\n\n");
+
+
+num1;
+num2;
+num3;
 suma;
+promedio;
 
-leer(a);
-leer(b);
 
-suma = * ab
+imprimir("Ingresa el primer numero\n\n");
+leer(num1);
 
- imprimir(suma);
- imprimir("\n");
+imprimir("Ingresa el segundo numero\n\n");
+leer(num2);
+
+
+imprimir("Ingresa el tercer numero\n\n");
+leer(num3);
+
+suma = ++ num1num2num3
+
+promedio = / suma3
+
+imprimir("El promedio es: ");
+imprimir(promedio);
+imprimir("\n");
+
+si(promedio>6.0)
+{
+
+imprimir("Estas aprobado\n");
+
+}
+
+sino{
+
+imprimir("Estas reprobado\n");
+
+}
 
 
 

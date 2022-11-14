@@ -1,20 +1,23 @@
+//Generación de código intermedia
 principal()
 {
 
 
 imprimir("Programa para las tablas de multiplicar de un numero\n\n");
 
-declarar entero x;
-declarar entero i;
-declarar entero resultado;
+x;
+i;
+resultado;
 
 imprimir("Ingresa un numero\n\n");
 
 leer(x);
 
-ciclo_for(i=1;i<=10;i++){
+i=1;
 
-asignacion_a resultado = x*i;
+L1:
+
+resultado = * xi
 
 imprimir(x);
 imprimir(" x ");
@@ -23,10 +26,13 @@ imprimir(" = ");
 imprimir(resultado);
 imprimir("\n");
 
+i++;
+i<=10 ?  goto L1: goto L2
+
+L2
+
+
+
+
 }
-
-
-
-
-}    
 
