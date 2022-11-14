@@ -29,23 +29,197 @@ public class GeneradorObjeto {
         this.salida = salida;
     }
     
+    public void mov(){
     
-    public void ascii(){
-        
-        
-        
-        String str = entrada;
+        String str = entrada;           
         
         for(int i=0;i<str.length();i++){
             
-           
+            if(str.equals("declarar"))printline("mov");
+            
+            if(str.substring(1, 10).equals("64")){
+                printline("rax");
+                printline("rbx");
+                printline("rcx");
+                printline("rdx");                                       
+            }
+                                        
+            printline("ax");
+            printline("bx");            
+            printline("cx");
+            printline("dx");
+        }
+    }
+    
+    public void jump(){
+    
+        String str = entrada;           
+        
+        for(int i=0;i<str.length();i++){
+            
+            if(str.equals(">"))printline("jg");
+            if(str.equals(">="))printline("jge");
+            if(str.equals("<"))printline("jl");
+            if(str.equals("<="))printline("jle");
+            if(str.equals("=="))printline("je");
+            if(str.equals("!="))printline("jne");
+            
+            for(int j=0;j<18;j++){
+                printline("LC"+i);
+            }
+                                        
+            printline("add");
+            printline("mov");                        
+        }
+    }                 
+    public void ascii(){
+                        
+        String str = entrada;
+        
+        printline(".text");
+        
+        for(int i=0;i<str.length();i++){
+            
+            switch (str){
+                
+                case "33":
+                    printline("!");
+                 break;                    
+                 
+                case "34":
+                    printline("\"");
+                  break;                                        
+                case "35":
+                    printline("#");
+                  break;                                        
+                case "36":
+                    printline("$");
+                   break;                                    
+                case "37":
+                    printline("%");
+                   break;                     
+                case "38":
+                    printline("&");
+                   break; 
+                case "39":    
+                    printline("'");
+                    break;
+                case "40":    
+                    printline("(");
+                    break;
+                case "41":
+                    printline(")");
+                    break;
+                case "42":    
+                    printline("*");
+                    break;
+                case "43":    
+                    printline("+");
+                    break;
+                case "44":    
+                    printline(",");
+                    break;
+                case "45":    
+                    printline("-");
+                    break;
+                case "46":    
+                    printline(".");
+                    break;
+                case "47":    
+                    printline("/");
+                    break;
+                case "48":    
+                    printline("0");
+                    break;
+                case "49":    
+                    printline("1");
+                    break;
+                case "50":    
+                    printline("2");
+                    break;
+                case "51":    
+                    printline("3");
+                    break;                    
+                case "52":
+                    printline("4");
+                    break;
+                case "53":    
+                    printline("5");
+                    break;
+                case "54":    
+                    printline("6");
+                    break;
+                case "55":    
+                    printline("7");
+                    break;
+                case "56":    
+                    printline("8");
+                    break;
+                case "57":    
+                    printline("9");
+                    break;                                  
+                    
+            }
+            
+        }                                
+    }
+    
+    
+     public void call(){
+                        
+        String str = entrada;
+        
+        printline(".def global main");
+        
+        for(int i=0;i<str.length();i++){
+            
+            switch (str){
+                
+                case "33":
+                    printline("05x10");
+                 break;                    
+                 
+                case "34":
+                    printline("05x18");
+                  break;                                        
+                case "35":
+                    printline("05x1b");
+                  break;                                        
+                case "36":
+                    printline("05x11");
+                   break;                                    
+                case "37":
+                    printline("05x1c");
+                   break;                     
+                case "38":
+                    printline("05x1f");
+                   break; 
+                case "39":    
+                    printline("add");
+                    break;
+                case "40":    
+                    printline("05x19");
+                    break;
+                case "41":
+                    printline("05xb0");
+                    break;
+                case "42":    
+                    printline("05xc0");
+                    break;
+                case "43":    
+                    printline("05xd0");
+                    break;
+                case "44":    
+                    printline("05xd2");
+                    break;
+                case "45":    
+                    printline("05xe8");
+                    break;
+                    
+            }
             
         }
-        
-        
-        
-        
-    }
+     }
     
     public void compilar(){
                       
@@ -267,6 +441,10 @@ public class GeneradorObjeto {
         }
         
         
+    }
+
+    private void printline(String a) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
     
   

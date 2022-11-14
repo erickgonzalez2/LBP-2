@@ -1,32 +1,23 @@
 
 principal(){
 
-declarar entero cp;
-declarar entero p;
-declarar entero cf;
-declarar_a entero acum = 0;
-declarar entero i;
+imprimir("Programa que lee numeros, y cuenta cuantos numeros se ingresan, mientras sea diferente de 0\n\n");
 
-imprimir("Digite el numero de parciales");
+declarar entero num;
+declarar_a entero cont = 0;
 
-leer(p);
+leer(num);
 
-ciclo_for(i=0;i<=p;i++){
+ciclo_mientras(num>0){
 
-imprimir("Digite la calificacion");
+asignacion_a cont = cont+1;
 
-leer(cp);
-
-asignacion_a acum = acum+cp;
-
+leer(num);
 
 }
 
-asignacion_a cf= p/acum;
-
-imprimir("El promedio es ");
-
-imprimir(cf);
+imprimir("Total de numeros: ");
+imprimir(cont);
 
 
 }

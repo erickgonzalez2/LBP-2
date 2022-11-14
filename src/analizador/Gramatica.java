@@ -65,12 +65,15 @@ class Gramatica implements GramaticaConstants {
     File fichero1 = new File(cod+".exe");
     File fichero2 = new File(cod+"Objeto.txt");
     File fichero3 = new File(cod+"_generacion_intermedia.txt");
+    File fichero4 = new File(cod+".cpp");
 
-    if(fichero1.delete())System.out.println("Archivo reescrito");
+    if(fichero1.delete())System.out.println("");
 
-    if(fichero2.delete())System.out.println("Archivo reescrito");
+    if(fichero2.delete())System.out.println("");
 
-    if(fichero3.delete())System.out.println("Archivo reescrito");
+    if(fichero3.delete())System.out.println("");
+
+    if(fichero4.delete())System.out.println("");
 
     FileReader file = new FileReader(str);
     BufferedReader buffer = new BufferedReader (file);
@@ -121,6 +124,8 @@ class Gramatica implements GramaticaConstants {
       try {
             Thread.sleep(4000);
             System.out.println("Archivo listo para ejecuci\u00f3n");
+            File fichero4 = new File(cod+".cpp");
+            if(fichero4.delete())System.out.println("");
         }  catch (InterruptedException ex) {
             java.util.logging.Logger.getLogger(Gramatica.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -2605,6 +2610,18 @@ errorSti();
     finally { jj_save(2, xla); }
   }
 
+  static private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13()
+ {
+    if (jj_scan_token(IF)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_11()
  {
     if (jj_scan_token(FOR)) return true;
@@ -2641,18 +2658,6 @@ errorSti();
   static private boolean jj_3R_14()
  {
     if (jj_scan_token(LLAVEI)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13()
- {
-    if (jj_scan_token(IF)) return true;
     return false;
   }
 

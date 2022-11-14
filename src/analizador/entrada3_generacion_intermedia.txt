@@ -2,37 +2,27 @@
 
 principal(){
 
-cp;
-p;
-cf;
-enteroacum =  0
-i;
+imprimir("Programa que lee numeros, y cuenta cuantos numeros se ingresan, mientras sea diferente de 0\n\n");
 
-imprimir("Digite el numero de parciales");
+num;
+enterocont =  0
 
-leer(p);
+leer(num);
 
-i=0;
 
 L1:
 
-imprimir("Digite la calificacion");
+cont = + cont1
 
-leer(cp);
-
-acum = + acumcp
+leer(num);
 
 
-i++;
-i<=p ?  goto L1: goto L2
+num>0 ?  goto L1: goto L2
 
 L2
 
-cf = / pacum
-
-imprimir("El promedio es ");
-
-imprimir(cf);
+imprimir("Total de numeros: ");
+imprimir(cont);
 
 
 }
